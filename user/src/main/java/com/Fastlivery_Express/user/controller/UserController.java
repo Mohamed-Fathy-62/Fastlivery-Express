@@ -2,6 +2,7 @@ package com.Fastlivery_Express.user.controller;
 
 import com.Fastlivery_Express.user.dto.UserDto;
 import com.Fastlivery_Express.user.service.IUserService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -10,8 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-
-
+@Tag(
+        name = "CRUD REST APIs for User in Fastlivery Express",
+        description = "CRUD REST APIs in Fastlivery to CREATE, UPDATE, FETCH AND DELETE account details"
+)
 @RestController
 @RequestMapping(path = "/api/users", produces = {MediaType.APPLICATION_JSON_VALUE})
 @AllArgsConstructor

@@ -10,8 +10,10 @@ public class UserMapper {
         UserDto userDto = new UserDto();
 
         userDto.setUserId(user.getUserId());
-        userDto.setFullName(user.getFullName());
+        userDto.setFirstname(user.getFirstName());
+        userDto.setLastname(user.getLastName());
         userDto.setEmail(user.getEmail());
+        userDto.setPassword(user.getPassword());
         userDto.setMobileNumber(user.getMobileNumber());
         userDto.setProfileImageUrl(user.getProfileImageUrl());
         userDto.setRole(user.getRole());
@@ -25,9 +27,11 @@ public class UserMapper {
         if (userDto == null) return null;
         User user = new User();
 
-        user.setUserId(userDto.getUserId() != null ? userDto.getUserId() : 0); //TODO:user id can't be null
-        user.setFullName(userDto.getFullName());
+       // user.setUserId(userDto.getUserId() != null ? userDto.getUserId() : 0); //TODO:user id can't be null
+        user.setFirstName(userDto.getFirstname());
+        user.setLastName(userDto.getLastname());
         user.setEmail(userDto.getEmail());
+        user.setPassword(userDto.getPassword());
         user.setMobileNumber(userDto.getMobileNumber());
         user.setProfileImageUrl(userDto.getProfileImageUrl());
         user.setRole(userDto.getRole());

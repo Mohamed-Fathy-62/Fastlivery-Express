@@ -33,7 +33,7 @@ public class UserServiceImpl implements IUserService {
         if (existingUser.isPresent()) {
             throw new UserAlreadyExistsException("The email " + user.getEmail() + " is already registered.");
         } else {
-            user.setUserId(1000L);
+            //user.setUserId(1000L);
             User savedUser = userRepository.save(user);
             return userDto;
         }
@@ -56,7 +56,8 @@ public class UserServiceImpl implements IUserService {
         Optional<User> existingUser = userRepository.findById(id);
         if(existingUser.isPresent()){
             User userToUpdate = existingUser.get();
-            userToUpdate.setFullName(userDto.getFullName());
+            userToUpdate.setFirstName(userDto.getFirstname());
+            userToUpdate.setLastName(userDto.getLastname());
             userToUpdate.setEmail(userDto.getEmail());
             userToUpdate.setMobileNumber(userDto.getMobileNumber());
             userToUpdate.setProfileImageUrl(userDto.getProfileImageUrl());
