@@ -39,7 +39,7 @@ public class ShipmentMapper {
         if (shipmentDto == null) return null;
         Shipment shipment = new Shipment();
 
-        shipment.setShipmentId(shipmentDto.getShipmentId());
+        //shipment.setShipmentId(shipmentDto.getShipmentId());
         shipment.setTrackingNumber(shipmentDto.getTrackingNumber());
         shipment.setCustomerId(shipmentDto.getCustomerId());
         shipment.setDriverId(shipmentDto.getDriverId());

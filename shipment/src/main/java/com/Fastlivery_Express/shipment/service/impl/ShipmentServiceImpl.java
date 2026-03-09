@@ -69,6 +69,6 @@ public class ShipmentServiceImpl implements IShipmentService {
     @Override
     public ShipmentDto createShipment(ShipmentDto shipmentDto) {
         shipmentRepository.save(ShipmentMapper.mapToShipment(shipmentDto));
-        return null;
+        return shipmentDto;
     }
 }
