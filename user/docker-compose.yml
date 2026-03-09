@@ -1,0 +1,36 @@
+services:
+  users:
+    image: "mohamedfathy62/user-service:v1"
+    container_name: users-ms
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5432/fedb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 622000
+
+    ports:
+      - "8081:8081"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - fastlivery
+
+  shipments:
+    image: "mohamedfathy62/shipment-service:v1"
+    container_name: shipments-ms
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://host.docker.internal:5432/fedb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 622000
+    ports:
+      - "8082:8082"
+    deploy:
+      resources:
+        limits:
+          memory: 700m
+    networks:
+      - fastlivery
+networks:
+  fastlivery:
+    driver: "bridge"
