@@ -1,0 +1,47 @@
+services:
+  configserver:
+    image: "mofathy62/configserver:v1"
+    container_name: configserver-ms
+    ports:
+      - "8071:8071"
+    healthcheck:
+      test: "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: microservice-base-config
+
+  users:
+    image: "mohamedfathy62/user-service:v1"
+    container_name: users-ms
+    ports:
+      - "8081:8081"
+    depends_on:
+      configserver:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "users"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+
+  shipments:
+    image: "mohamedfathy62/shipment-service:v1"
+    container_name: shipments-ms
+    ports:
+      - "8082:8082"
+    depends_on:
+      configserver:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "shipments"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+
+networks:
+  fastlivery:
+    driver: "bridge"
