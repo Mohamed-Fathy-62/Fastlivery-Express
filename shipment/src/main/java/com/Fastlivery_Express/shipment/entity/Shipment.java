@@ -13,8 +13,8 @@ public class Shipment extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "shipment_id")
-    private Long shipmentId;
+    @Column(name = "id")
+    private Long id;
 
     @Column(name = "tracking_number", nullable = false)
     private String trackingNumber;

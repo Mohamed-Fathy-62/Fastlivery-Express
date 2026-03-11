@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
         description = "Schema to hold Shipment information"
 )
 public class ShipmentDto {
-    private Long shipmentId;
+    private Long id;
     private String trackingNumber;
     private Long customerId;
     private Long driverId;

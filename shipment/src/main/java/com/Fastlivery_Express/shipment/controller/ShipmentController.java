@@ -1,10 +1,11 @@
 package com.Fastlivery_Express.shipment.controller;
 
+import com.Fastlivery_Express.shipment.dto.ShipmentContactInfoDto;
 import com.Fastlivery_Express.shipment.dto.ShipmentDto;
 import com.Fastlivery_Express.shipment.service.IShipmentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +18,18 @@ import org.springframework.web.bind.annotation.*;
 )
 @RestController
 @RequestMapping(path = "/api/shipments", produces = {MediaType.APPLICATION_JSON_VALUE})
-@AllArgsConstructor
 @Validated
 public class ShipmentController {
 
     private final IShipmentService iShipmentService;
+
+    @Autowired
+    private ShipmentContactInfoDto shipmentContactInfoDto;
+
+    public ShipmentController(IShipmentService iShipmentService) {
+        this.iShipmentService = iShipmentService;
+    }
+
 
     @PostMapping
     public ResponseEntity<ShipmentDto> createShipment(@Valid @RequestBody ShipmentDto shipmentDto) {
@@ -48,6 +56,13 @@ public class ShipmentController {
         boolean isDeleted = iShipmentService.deleteShipment(id);
         if (!isDeleted) return ResponseEntity.notFound().build();
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/contact-info")
+    public ResponseEntity<ShipmentContactInfoDto> getContactInfo() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(shipmentContactInfoDto);
     }
 
 }

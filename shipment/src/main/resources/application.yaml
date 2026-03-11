@@ -1,9 +1,9 @@
 server:
-  port: 8082
+  port: 8086
 
 spring:
   application:
-    name: user
+    name: shipments
   datasource:
     url: jdbc:postgresql://localhost:5432/fedb
     username: postgres
@@ -16,3 +16,5 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+  config:
+    import: "configserver:http://localhost:8071/"

@@ -1,10 +1,12 @@
 package com.Fastlivery_Express.user.controller;
 
 import com.Fastlivery_Express.user.dto.UserDto;
+import com.Fastlivery_Express.user.dto.UsersContactInfoDto;
 import com.Fastlivery_Express.user.service.IUserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,11 +19,18 @@ import org.springframework.web.bind.annotation.*;
 )
 @RestController
 @RequestMapping(path = "/api/users", produces = {MediaType.APPLICATION_JSON_VALUE})
-@AllArgsConstructor
 @Validated
 public class UserController {
 
     private final IUserService userService;
+
+
+    @Autowired
+    private UsersContactInfoDto usersContactInfoDto;
+
+    public UserController(IUserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
@@ -48,6 +57,14 @@ public class UserController {
         boolean isDeleted = userService.deleteUser(id);
         if (!isDeleted) return ResponseEntity.notFound().build();
         return ResponseEntity.noContent().build();
+    }
+
+
+    @GetMapping("/contact-info")
+    public ResponseEntity<UsersContactInfoDto> getContactInfo() {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(usersContactInfoDto);
     }
 
 }
