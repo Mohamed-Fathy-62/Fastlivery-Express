@@ -1,5 +1,6 @@
 package com.Fastlivery_Express.user.controller;
 
+import com.Fastlivery_Express.user.dto.ShipmentDto;
 import com.Fastlivery_Express.user.dto.UserDto;
 import com.Fastlivery_Express.user.dto.UsersContactInfoDto;
 import com.Fastlivery_Express.user.service.IUserService;
@@ -12,6 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(
         name = "CRUD REST APIs for User in Fastlivery Express",
@@ -66,5 +69,9 @@ public class UserController {
                 .status(HttpStatus.OK)
                 .body(usersContactInfoDto);
     }
-
+    @GetMapping("/shipments/getAllShipmentsByUserId")
+    public ResponseEntity<List<ShipmentDto>> getAllShipmentsByUserId(/*@RequestParam("customer_id") Long customerId*/) {
+        List<ShipmentDto> shipments = userService.getAllShipmentsByUserId(1L);
+        return ResponseEntity.ok(shipments);
+    }
 }

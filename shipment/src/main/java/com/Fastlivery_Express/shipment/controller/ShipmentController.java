@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(
         name = "CRUD REST APIs for Shipment in Fastlivery Express",
         description = "CRUD REST APIs in Fastlivery to CREATE, UPDATE, FETCH AND DELETE shipment details"
@@ -35,6 +37,12 @@ public class ShipmentController {
     public ResponseEntity<ShipmentDto> createShipment(@Valid @RequestBody ShipmentDto shipmentDto) {
         ShipmentDto created = iShipmentService.createShipment(shipmentDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<ShipmentDto>> getAllShipments(@RequestParam("customer_id") Long customerId) {
+        List<ShipmentDto> shipments = iShipmentService.getAllShipmentsByUserId(customerId);
+        return ResponseEntity.ok(shipments);
     }
 
     @GetMapping("/{id}")

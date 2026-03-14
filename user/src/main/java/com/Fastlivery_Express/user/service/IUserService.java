@@ -1,5 +1,6 @@
 package com.Fastlivery_Express.user.service;
 
+import com.Fastlivery_Express.user.dto.ShipmentDto;
 import com.Fastlivery_Express.user.dto.UserDto;
 
 import java.util.List;
@@ -10,4 +11,5 @@ public interface IUserService {
     UserDto getUserById(Long id);
     boolean updateUser(Long id, UserDto userDto);
     boolean deleteUser(Long id);
+    List<ShipmentDto> getAllShipmentsByUserId(Long userId);
 }

@@ -1,5 +1,6 @@
 package com.Fastlivery_Express.user.service.impl;
 
+import com.Fastlivery_Express.user.dto.ShipmentDto;
 import com.Fastlivery_Express.user.dto.UserDto;
 import com.Fastlivery_Express.user.entity.User;
 import com.Fastlivery_Express.user.exception.UserAlreadyExistsException;
@@ -7,6 +8,7 @@ import com.Fastlivery_Express.user.exception.UserNotFoundException;
 import com.Fastlivery_Express.user.mapper.UserMapper;
 import com.Fastlivery_Express.user.repository.UserRepository;
 import com.Fastlivery_Express.user.service.IUserService;
+import com.Fastlivery_Express.user.service.clients.ShipmentsFeignClient;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
 public class UserServiceImpl implements IUserService {
 
     private UserRepository userRepository;
-
+    private ShipmentsFeignClient shipmentsFeignClient;
 
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -79,5 +81,10 @@ public class UserServiceImpl implements IUserService {
             userRepository.delete(user);
             return true;
         }).orElse(false);
+    }
+
+    @Override
+    public List<ShipmentDto> getAllShipmentsByUserId(Long userId) {
+        return shipmentsFeignClient.getAllShipments(userId).getBody();
     }
 }

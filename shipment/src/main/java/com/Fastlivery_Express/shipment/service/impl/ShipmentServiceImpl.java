@@ -9,6 +9,7 @@ import com.Fastlivery_Express.shipment.service.IShipmentService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -64,6 +65,11 @@ public class ShipmentServiceImpl implements IShipmentService {
             shipmentRepository.delete(shipment);
             return true;
         }).orElse(false);
+    }
+
+    @Override
+    public List<ShipmentDto> getAllShipmentsByUserId(Long customerId) {
+        return ShipmentMapper.mapToListDtos(shipmentRepository.findByCustomerId(customerId));
     }
 
     @Override

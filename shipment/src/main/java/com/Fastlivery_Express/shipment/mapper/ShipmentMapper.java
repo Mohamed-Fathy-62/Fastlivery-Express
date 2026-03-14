@@ -3,6 +3,8 @@ package com.Fastlivery_Express.shipment.mapper;
 import com.Fastlivery_Express.shipment.dto.ShipmentDto;
 import com.Fastlivery_Express.shipment.entity.Shipment;
 
+import java.util.List;
+import java.util.Optional;
 
 
 public class ShipmentMapper {
@@ -61,5 +63,13 @@ public class ShipmentMapper {
         shipment.setPackageDimensions(shipmentDto.getPackageDimensions());
 
         return shipment;
+    }
+
+    public static List<ShipmentDto> mapToListDtos(Optional<List<Shipment>> byUserId) {
+        return byUserId
+                .orElse(List.of())
+                .stream()
+                .map(ShipmentMapper::mapToShipmentDto)
+                .toList();
     }
 }
