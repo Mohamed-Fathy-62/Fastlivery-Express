@@ -52,6 +52,10 @@
 			<artifactId>spring-cloud-starter-config</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
@@ -139,7 +143,7 @@
 						<image>mohamedfathy62/${project.artifactId}:v1</image>
 					</to>
 					<container>
-						<mainClass>com.Fastlivery_Express.shipment.ShipmentApplication</mainClass>
+						<mainClass>com.Fastlivery_Express.shipment.PricingApplication</mainClass>
 					</container>
 				</configuration>
 			</plugin>
