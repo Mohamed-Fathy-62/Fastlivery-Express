@@ -9,7 +9,7 @@
 		<relativePath/>
 	</parent>
 	<groupId>com.Fastlivery_Express</groupId>
-	<artifactId>user-service</artifactId>
+	<artifactId>user</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>user-service</name>
 	<description>User service for Fastlivery platform</description>

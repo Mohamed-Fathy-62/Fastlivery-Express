@@ -1,9 +1,9 @@
 server:
-  port: 8086
+  port: 8087
 
 spring:
   application:
-    name: shipments
+    name: pricing
   datasource:
     url: jdbc:postgresql://localhost:5432/fedb
     username: postgres
@@ -30,17 +30,23 @@ management:
   info:
     env:
       enabled: true
+#
+#eureka:
+#  instance:
+#    preferIpAddress: true
+#  client:
+#    fetchRegistry: true
+#    registerWithEureka: true
+#    serviceUrl:
+#      defaultZone: http://localhost:8070/eureka/
 
-eureka:
-  instance:
-    preferIpAddress: true
-  client:
-    fetchRegistry: true
-    registerWithEureka: true
-    serviceUrl:
-      defaultZone: http://localhost:8070/eureka/
+ors:
+  base-url: https://api.openrouteservice.org
+  api-key: eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6IjgxMWQ0M2FhYWJiOTQyODBhOTc1NWYwZmZmNTRhZmVlIiwiaCI6Im11cm11cjY0In0=   # TODO : vault -> secret
+  connect-timeout-ms: 3000
+  read-timeout-ms: 5000
 
 info:
   app:
-    name: "shipments"
-    description: "shipments microservice for Fastlivery Express"
+    name: "pricing"
+    description: "pricing microservice for Fastlivery Express"
