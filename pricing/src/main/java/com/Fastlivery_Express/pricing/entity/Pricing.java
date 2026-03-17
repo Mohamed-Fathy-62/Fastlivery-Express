@@ -1,8 +1,14 @@
 package com.Fastlivery_Express.pricing.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Setter @Getter @AllArgsConstructor
+@RequiredArgsConstructor
 @Table(name = "pricing")
 public class Pricing extends BaseEntity{
     @Id

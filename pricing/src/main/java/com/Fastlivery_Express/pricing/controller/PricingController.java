@@ -27,9 +27,8 @@ public class PricingController {
 
 
     @GetMapping
-    public ResponseEntity<String> test(@Valid @RequestBody CoordinatesDto coordinatesDto) {
-        var created = iPricingService.calculatePrice(coordinatesDto);
-
+    public ResponseEntity<Double> test(@Valid @RequestBody CoordinatesDto coordinatesDto) {
+        var created = iPricingService.calculatePrice(coordinatesDto, 1.0); //assume weight is 1 kg for testing
 
 
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
