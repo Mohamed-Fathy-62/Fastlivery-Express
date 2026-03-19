@@ -18,6 +18,12 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   config:
     import: "configserver:http://localhost:8071/"
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:9095/realms/fastlivery-express
+          jwk-set-uri: http://localhost:9095/realms/fastlivery-express/protocol/openid-connect/certs
 
 management:
   endpoints:

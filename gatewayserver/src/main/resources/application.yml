@@ -1,3 +1,5 @@
+server:
+  port: 8088
 spring:
   application:
     name: "gatewayserver"
@@ -9,8 +11,38 @@ spring:
         webflux:
           discovery:
             locator:
-              enabled: false
+              enabled: true
               lowerCaseServiceId: true
+      default-filters:
+        - TokenRelay
+      routes:
+        - id: fastlivery-express
+          uri: lb://users
+          predicates:
+            - Path=/api/users/**
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: fastlivery-express
+            client-secret: kuLDM3YGeP2V3olNBVxM79wPFibnwb3e
+            scope: openid, profile, email, roles
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:9095/realms/fastlivery-express
+  session:
+    store-type: redis
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    fetchRegistry: true
+    registerWithEureka: true
+    serviceUrl:
+      defaultZone: http://localhost:8070/eureka/
 
 management:
   endpoints:

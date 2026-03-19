@@ -10,6 +10,7 @@ public class UserMapper {
         UserDto userDto = new UserDto();
 
         userDto.setUserId(user.getUserId());
+//        userDto.setKeycloakId(user.getKeycloakId());
         userDto.setFirstname(user.getFirstName());
         userDto.setLastname(user.getLastName());
         userDto.setEmail(user.getEmail());
@@ -29,6 +30,7 @@ public class UserMapper {
 
        // user.setUserId(userDto.getUserId() != null ? userDto.getUserId() : 0); //TODO:user id can't be null
         user.setFirstName(userDto.getFirstname());
+//        user.getKeycloakId(userDto.getKeycloakId());
         user.setLastName(userDto.getLastname());
         user.setEmail(userDto.getEmail());
         user.setPassword(userDto.getPassword());

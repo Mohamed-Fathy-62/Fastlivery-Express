@@ -1,0 +1,24 @@
+#Delete when possible
+##this is demo docker-compose file for keycloak
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.5.5
+    container_name: keycloak
+    command: start-dev
+    ports:
+      - "9095:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://host.docker.internal:5432/keycloak
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: 622000
+      KC_HOSTNAME_STRICT_HTTPS: false
+      KC_HTTP_ENABLED: true
+      KC_HOSTNAME_STRICT: false
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+
+volumes:
+  keycloak_data:

@@ -17,6 +17,9 @@ public class User extends BaseEntity {
     @Column(name = "user_id")
     private Long userId;
 
+    @Column(name = "keycloak_id", unique = true, nullable = false)
+    private String keycloakId;
+
     @Column(name = "first_name", nullable = false)
     private String firstName;
 

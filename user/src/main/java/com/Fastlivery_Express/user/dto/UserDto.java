@@ -16,6 +16,8 @@ public class UserDto {
     private String firstname;
     private String lastname;
     private String password;
+//    private String keycloakId;
+
     @NotEmpty(message = "email can not be a null or empty")
     @Pattern(regexp="(^$|[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})",message = "email must be a valid email address")
     @Schema(

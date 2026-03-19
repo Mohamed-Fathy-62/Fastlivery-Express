@@ -3,6 +3,9 @@ package com.Fastlivery_Express.user.controller;
 import com.Fastlivery_Express.user.dto.ShipmentDto;
 import com.Fastlivery_Express.user.dto.UserDto;
 import com.Fastlivery_Express.user.dto.UsersContactInfoDto;
+import com.Fastlivery_Express.user.entity.User;
+import com.Fastlivery_Express.user.exception.UserNotFoundException;
+import com.Fastlivery_Express.user.repository.UserRepository;
 import com.Fastlivery_Express.user.service.IUserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -11,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,18 +28,27 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/api/users", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
+@AllArgsConstructor
 public class UserController {
 
-    private final IUserService userService;
-
+    private IUserService userService;
+    private UserRepository userRepository;
 
     @Autowired
     private UsersContactInfoDto usersContactInfoDto;
 
-    public UserController(IUserService userService) {
-        this.userService = userService;
-    }
+//    public UserController(IUserService userService) {
+//        this.userService = userService;
+//    }
 
+//    @GetMapping("/profile")
+//    public ResponseEntity<User> getUserProfile(@AuthenticationPrincipal Jwt jwt) {
+//        String keycloakId = jwt.getSubject();
+//        User user = userRepository.findByKeycloakId(keycloakId)
+//                .orElseThrow(() -> new UserNotFoundException("User not synced yet"));
+//
+//        return ResponseEntity.ok(user);
+//    }
     @PostMapping
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
         UserDto created = userService.createUser(userDto);
