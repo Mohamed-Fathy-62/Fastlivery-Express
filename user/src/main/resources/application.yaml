@@ -9,9 +9,12 @@ spring:
     username: postgres
     password: 622000
     driver-class-name: org.postgresql.Driver
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: false
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -45,6 +48,8 @@ eureka:
     registerWithEureka: true
     serviceUrl:
       defaultZone: http://localhost:8070/eureka/
+
+
 
 info:
   app:

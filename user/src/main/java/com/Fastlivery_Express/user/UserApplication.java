@@ -1,5 +1,6 @@
 package com.Fastlivery_Express.user;
 
+import com.Fastlivery_Express.user.dto.KeycloakConfigsDto;
 import com.Fastlivery_Express.user.dto.UsersContactInfoDto;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @SpringBootApplication
 @EnableJpaAuditing(auditorAwareRef = "auditAwareImpl")
 @EnableFeignClients
-@EnableConfigurationProperties({UsersContactInfoDto.class})
+@EnableConfigurationProperties({UsersContactInfoDto.class, KeycloakConfigsDto.class})
 public class UserApplication {
 
 	public static void main(String[] args) {

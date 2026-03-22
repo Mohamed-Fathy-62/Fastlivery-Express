@@ -5,10 +5,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.session.data.redis.config.annotation.web.server.EnableRedisWebSession;
 
 import java.time.LocalDateTime;
 
 @SpringBootApplication
+@EnableRedisWebSession
 public class GatewayserverApplication {
 
 	public static void main(String[] args) {

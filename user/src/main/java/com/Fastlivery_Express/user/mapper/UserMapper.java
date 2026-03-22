@@ -2,6 +2,7 @@ package com.Fastlivery_Express.user.mapper;
 
 import com.Fastlivery_Express.user.dto.UserDto;
 import com.Fastlivery_Express.user.entity.User;
+import org.keycloak.representations.idm.UserRepresentation;
 
 
 public class UserMapper {
@@ -9,12 +10,10 @@ public class UserMapper {
         if (user == null) return null;
         UserDto userDto = new UserDto();
 
-        userDto.setUserId(user.getUserId());
-//        userDto.setKeycloakId(user.getKeycloakId());
-        userDto.setFirstname(user.getFirstName());
-        userDto.setLastname(user.getLastName());
+        userDto.setKeycloakId(user.getKeycloakId());
+        userDto.setFirstname(userDto.getFirstname());
+        userDto.setLastname(userDto.getLastname());
         userDto.setEmail(user.getEmail());
-        userDto.setPassword(user.getPassword());
         userDto.setMobileNumber(user.getMobileNumber());
         userDto.setProfileImageUrl(user.getProfileImageUrl());
         userDto.setRole(user.getRole());
@@ -28,12 +27,10 @@ public class UserMapper {
         if (userDto == null) return null;
         User user = new User();
 
-       // user.setUserId(userDto.getUserId() != null ? userDto.getUserId() : 0); //TODO:user id can't be null
-        user.setFirstName(userDto.getFirstname());
-//        user.getKeycloakId(userDto.getKeycloakId());
-        user.setLastName(userDto.getLastname());
+        user.setKeycloakId(userDto.getKeycloakId());
+        user.setFirstname(userDto.getFirstname());
+        user.setLastname(userDto.getLastname());
         user.setEmail(userDto.getEmail());
-        user.setPassword(userDto.getPassword());
         user.setMobileNumber(userDto.getMobileNumber());
         user.setProfileImageUrl(userDto.getProfileImageUrl());
         user.setRole(userDto.getRole());
@@ -41,5 +38,16 @@ public class UserMapper {
         user.setPreferredLanguage(userDto.getPreferredLanguage());
         user.setIsVerified(userDto.getIsVerified() != null ? userDto.getIsVerified() : Boolean.FALSE);
         return user;
+    }
+
+    public static UserRepresentation mapToUserRepresentation(UserDto userDto, UserRepresentation userRepresentation) {
+        if (userDto == null || userRepresentation == null) return null;
+
+        userRepresentation.setEmail(userDto.getEmail());
+        userRepresentation.setFirstName(userDto.getFirstname());
+        userRepresentation.setLastName(userDto.getLastname());
+        userRepresentation.setUsername(userDto.getEmail());
+        userRepresentation.setEnabled(true);
+        return userRepresentation;
     }
 }

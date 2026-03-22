@@ -13,36 +13,31 @@ import java.util.UUID;
 public class User extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO) //ToDo: change userId generation logic don't depend on the db generation
-    @Column(name = "user_id")
-    private Long userId;
-
     @Column(name = "keycloak_id", unique = true, nullable = false)
     private String keycloakId;
-
-    @Column(name = "first_name", nullable = false)
-    private String firstName;
-
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
-
-    @Column(name = "password")
-    private String password;
-
-    @Column(name = "email", unique = true, nullable = false)
+    @Column(name = "email", unique = true)
     private String email;
 
     @Column(name = "mobile_number", unique = true)
     private String mobileNumber;
 
+    @Column(name = "firstname")
+    private String firstname;
+
+    @Column(name = "lastname")
+    private String lastname;
+
     @Column(name = "profile_image_url")
     private String profileImageUrl;
 
+    @Column(name = "national_id")
+    private String nationalId;
+
     @Column(name = "role")
-    private String role; // e.g., customer, admin
+    private String role; // ROLE_CUSTOMER, ROLE_DELIVERY, ROLE_ADMIN
 
     @Column(name = "status")
-    private String status; // e.g., active, inactive, suspended
+    private String status; //active, inactive, suspended
 
     @Column(name = "preferred_language")
     private String preferredLanguage;
