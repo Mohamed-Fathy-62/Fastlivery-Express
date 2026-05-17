@@ -18,7 +18,6 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   config:
     import: "configserver:http://localhost:8071/"
-
 management:
   endpoints:
     web:
@@ -44,3 +43,9 @@ info:
   app:
     name: "shipments"
     description: "shipments microservice for Fastlivery Express"
+
+clients:
+  users:
+    url: http://localhost:8085
+  pricing:
+    url: http://localhost:8087

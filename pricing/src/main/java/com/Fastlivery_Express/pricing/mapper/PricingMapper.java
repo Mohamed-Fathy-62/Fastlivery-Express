@@ -11,7 +11,8 @@ public class PricingMapper {
         Pricing pricing = new Pricing();
         pricing.setBaseFare(pricingDto.baseFare());
         pricing.setRatePerKm(pricingDto.ratePerKm());
-        pricing.setRatePerKg(pricingDto.ratePerHour());
+        pricing.setRatePerKg(pricingDto.ratePerKg());
+        pricing.setIsActive(pricingDto.isActive() != null ? pricingDto.isActive() : Boolean.FALSE);
         return pricing;
     }
 
@@ -19,7 +20,8 @@ public class PricingMapper {
         if (pricing == null) {
             return null;
         }
-        return new PricingDto(pricing.getBaseFare(),
+        return new PricingDto(pricing.getId(),
+                pricing.getBaseFare(),
                 pricing.getRatePerKm(),
                 pricing.getRatePerKg(),
                 pricing.getIsActive());

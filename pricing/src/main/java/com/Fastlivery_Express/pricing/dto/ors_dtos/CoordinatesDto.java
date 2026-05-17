@@ -6,13 +6,14 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
 
 //Becase Data Carrier only
 
-@Setter @Getter @AllArgsConstructor
+@Setter @Getter @AllArgsConstructor @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CoordinatesDto {
         @NotEmpty(message = "coordinates must not be empty")

@@ -20,16 +20,28 @@ public class Shipment extends BaseEntity {
     private String trackingNumber;
 
     @Column(name = "customer_id", nullable = false)
-    private Long customerId;
+    private String customerId;
 
     @Column(name = "driver_id", nullable = false)
-    private Long driverId;
+    private String driverId;
 
     @Column(name = "origin_address", nullable = false)
     private String originAddress;
 
     @Column(name = "destination_address", nullable = false)
     private String destinationAddress;
+
+    @Column(name = "origin_latitude")
+    private Double originLatitude;
+
+    @Column(name = "origin_longitude")
+    private Double originLongitude;
+
+    @Column(name = "destination_latitude")
+    private Double destinationLatitude;
+
+    @Column(name = "destination_longitude")
+    private Double destinationLongitude;
 
     @Column(name = "status", nullable = false)
     private String status; // e.g., pending, in_transit, delivered, cancelled

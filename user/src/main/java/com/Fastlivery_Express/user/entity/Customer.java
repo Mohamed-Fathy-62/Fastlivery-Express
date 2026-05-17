@@ -5,17 +5,25 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.*;
 
-//@Entity
-//@Getter
-//@Setter
-//@NoArgsConstructor
-//@AllArgsConstructor
-//@Table(name = "customers")
-public class Customer /*extends User*/ {
-//        @Column(name = "preferred_payment_method")
-//        private String preferredPaymentMethod;
-//        @Column(name = "delivery_address")
-//        private String deliveryAddress;
-//        @Column(name = "loyalty_points")
-//        private Integer loyaltyPoints;
+@Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "customers")
+public class Customer extends User {
+        @Column(name = "preferred_payment_method")
+        private String preferredPaymentMethod;
+        @Column(name = "delivery_address")
+        private String deliveryAddress;
+        @Column(name = "loyalty_points")
+        private Integer loyaltyPoints;
+        @Column(name = "total_orders")
+        private Integer totalOrders;
+        @Column(name = "total_spent")
+        private Double totalSpent;
+        @Column(name = "last_order_time")
+        private String lastOrderTime;
+        @Column(name = "is_premium_member")
+        private Boolean isPremiumMember;
 }

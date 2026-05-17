@@ -14,10 +14,14 @@ import java.time.LocalDateTime;
 public class ShipmentDto {
     private Long id;
     private String trackingNumber;
-    private Long customerId;
-    private Long driverId;
+    private String customerId;
+    private String driverId;
     private String originAddress;
     private String destinationAddress;
+    private Double originLatitude;
+    private Double originLongitude;
+    private Double destinationLatitude;
+    private Double destinationLongitude;
     private String status;
     private Double totalPrice;
     private LocalDateTime estimatedDeliveryTime;

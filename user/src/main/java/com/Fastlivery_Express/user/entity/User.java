@@ -10,11 +10,13 @@ import java.util.UUID;
 @Getter @Setter @ToString
 @NoArgsConstructor @AllArgsConstructor
 @Table(name = "users")
+@Inheritance(strategy = InheritanceType.JOINED)
 public class User extends BaseEntity {
 
     @Id
-    @Column(name = "keycloak_id", unique = true, nullable = false)
-    private String keycloakId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "user_id", unique = true, nullable = false)
+    private String userId;
     @Column(name = "email", unique = true)
     private String email;
 

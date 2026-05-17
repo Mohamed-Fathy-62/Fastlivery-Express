@@ -2,6 +2,8 @@ package com.Fastlivery_Express.shipment.controller;
 
 import com.Fastlivery_Express.shipment.dto.ShipmentContactInfoDto;
 import com.Fastlivery_Express.shipment.dto.ShipmentDto;
+import com.Fastlivery_Express.shipment.dto.ShipmentQuoteResponseDto;
+import com.Fastlivery_Express.shipment.dto.ShipmentRequestDto;
 import com.Fastlivery_Express.shipment.service.IShipmentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -39,8 +41,19 @@ public class ShipmentController {
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
+    @PostMapping("/request")
+    public ResponseEntity<ShipmentQuoteResponseDto> requestShipment(@Valid @RequestBody ShipmentRequestDto shipmentRequestDto) {
+        ShipmentQuoteResponseDto quote = iShipmentService.requestShipment(shipmentRequestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(quote);
+    }
+
+    @PostMapping("/{id}/confirm")
+    public ResponseEntity<ShipmentDto> confirmShipment(@Valid @PathVariable Long id) {
+        return ResponseEntity.ok(iShipmentService.confirmShipment(id));
+    }
+
     @GetMapping("/all")
-    public ResponseEntity<List<ShipmentDto>> getAllShipments(@RequestParam("customer_id") Long customerId) {
+    public ResponseEntity<List<ShipmentDto>> getAllShipments(@RequestParam("customer_id") String customerId) {
         List<ShipmentDto> shipments = iShipmentService.getAllShipmentsByUserId(customerId);
         return ResponseEntity.ok(shipments);
     }

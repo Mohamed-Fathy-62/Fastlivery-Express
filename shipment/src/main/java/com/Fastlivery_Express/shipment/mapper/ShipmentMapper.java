@@ -18,6 +18,10 @@ public class ShipmentMapper {
         shipmentDto.setDriverId(shipment.getDriverId());
         shipmentDto.setOriginAddress(shipment.getOriginAddress());
         shipmentDto.setDestinationAddress(shipment.getDestinationAddress());
+        shipmentDto.setOriginLatitude(shipment.getOriginLatitude());
+        shipmentDto.setOriginLongitude(shipment.getOriginLongitude());
+        shipmentDto.setDestinationLatitude(shipment.getDestinationLatitude());
+        shipmentDto.setDestinationLongitude(shipment.getDestinationLongitude());
         shipmentDto.setStatus(shipment.getStatus());
         shipmentDto.setTotalPrice(shipment.getTotalPrice());
         shipmentDto.setEstimatedDeliveryTime(shipment.getEstimatedDeliveryTime());
@@ -47,6 +51,10 @@ public class ShipmentMapper {
         shipment.setDriverId(shipmentDto.getDriverId());
         shipment.setOriginAddress(shipmentDto.getOriginAddress());
         shipment.setDestinationAddress(shipmentDto.getDestinationAddress());
+        shipment.setOriginLatitude(shipmentDto.getOriginLatitude());
+        shipment.setOriginLongitude(shipmentDto.getOriginLongitude());
+        shipment.setDestinationLatitude(shipmentDto.getDestinationLatitude());
+        shipment.setDestinationLongitude(shipmentDto.getDestinationLongitude());
         shipment.setStatus(shipmentDto.getStatus());
         shipment.setTotalPrice(shipmentDto.getTotalPrice());
         shipment.setEstimatedDeliveryTime(shipmentDto.getEstimatedDeliveryTime());

@@ -12,11 +12,10 @@ import lombok.Data;
         description = "Schema to hold User information"
 )
 public class UserDto {
-    private Long userId;
     private String firstname;
     private String lastname;
     private String password;
-    private String keycloakId;
+    private String userId;
 
 
     @NotEmpty(message = "email can not be a null or empty")

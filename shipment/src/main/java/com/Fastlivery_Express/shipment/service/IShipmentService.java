@@ -1,6 +1,8 @@
 package com.Fastlivery_Express.shipment.service;
 
 import com.Fastlivery_Express.shipment.dto.ShipmentDto;
+import com.Fastlivery_Express.shipment.dto.ShipmentQuoteResponseDto;
+import com.Fastlivery_Express.shipment.dto.ShipmentRequestDto;
 
 import java.util.List;
 
@@ -10,5 +12,7 @@ public interface IShipmentService {
     boolean updateShipment(Long id, ShipmentDto userDto);
     boolean deleteShipment(Long id);
 
-    List<ShipmentDto> getAllShipmentsByUserId(Long userId);
+    List<ShipmentDto> getAllShipmentsByUserId(String userId);
+    ShipmentQuoteResponseDto requestShipment(ShipmentRequestDto shipmentRequestDto);
+    ShipmentDto confirmShipment(Long id);
 }

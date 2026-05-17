@@ -2,7 +2,6 @@ package com.Fastlivery_Express.user.mapper;
 
 import com.Fastlivery_Express.user.dto.UserDto;
 import com.Fastlivery_Express.user.entity.User;
-import org.keycloak.representations.idm.UserRepresentation;
 
 
 public class UserMapper {
@@ -10,9 +9,9 @@ public class UserMapper {
         if (user == null) return null;
         UserDto userDto = new UserDto();
 
-        userDto.setKeycloakId(user.getKeycloakId());
-        userDto.setFirstname(userDto.getFirstname());
-        userDto.setLastname(userDto.getLastname());
+        userDto.setUserId(user.getUserId());
+        userDto.setFirstname(user.getFirstname());
+        userDto.setLastname(user.getLastname());
         userDto.setEmail(user.getEmail());
         userDto.setMobileNumber(user.getMobileNumber());
         userDto.setProfileImageUrl(user.getProfileImageUrl());
@@ -27,9 +26,11 @@ public class UserMapper {
         if (userDto == null) return null;
         User user = new User();
 
-        user.setKeycloakId(userDto.getKeycloakId());
-        user.setFirstname(userDto.getFirstname());
-        user.setLastname(userDto.getLastname());
+        if (userDto.getUserId() != null) {
+            user.setUserId(userDto.getUserId());
+        }
+        user.setFirstname(resolveFirstName(userDto));
+        user.setLastname(resolveLastName(userDto));
         user.setEmail(userDto.getEmail());
         user.setMobileNumber(userDto.getMobileNumber());
         user.setProfileImageUrl(userDto.getProfileImageUrl());
@@ -40,14 +41,29 @@ public class UserMapper {
         return user;
     }
 
-    public static UserRepresentation mapToUserRepresentation(UserDto userDto, UserRepresentation userRepresentation) {
-        if (userDto == null || userRepresentation == null) return null;
+    public static void mapUserFields(UserDto userDto, User user) {
+        if (userDto == null || user == null) return;
 
-        userRepresentation.setEmail(userDto.getEmail());
-        userRepresentation.setFirstName(userDto.getFirstname());
-        userRepresentation.setLastName(userDto.getLastname());
-        userRepresentation.setUsername(userDto.getEmail());
-        userRepresentation.setEnabled(true);
-        return userRepresentation;
+        if (userDto.getUserId() != null) {
+            user.setUserId(userDto.getUserId());
+        }
+        user.setFirstname(resolveFirstName(userDto));
+        user.setLastname(resolveLastName(userDto));
+        user.setEmail(userDto.getEmail());
+        user.setMobileNumber(userDto.getMobileNumber());
+        user.setProfileImageUrl(userDto.getProfileImageUrl());
+        user.setRole(userDto.getRole());
+        user.setStatus(userDto.getStatus());
+        user.setPreferredLanguage(userDto.getPreferredLanguage());
+        user.setIsVerified(userDto.getIsVerified() != null ? userDto.getIsVerified() : Boolean.FALSE);
     }
+
+    private static String resolveFirstName(UserDto userDto) {
+        return userDto.getFirstname();
+    }
+
+    private static String resolveLastName(UserDto userDto) {
+        return userDto.getLastname();
+    }
+
 }
