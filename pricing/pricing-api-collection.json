@@ -1,0 +1,277 @@
+{
+  "info": {
+    "_postman_id": "0de7fb3f-e0f8-4a29-9d95-2dbb94c25f29",
+    "name": "Fastlivery Express - Pricing Service",
+    "description": "Postman collection for pricing configuration and route quote APIs.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Quotes",
+      "item": [
+        {
+          "name": "Calculate Total Price",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coordinates\": [\n    [{{originLongitude}}, {{originLatitude}}],\n    [{{destinationLongitude}}, {{destinationLatitude}}]\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/pricing/calculate?weight={{weight}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pricing",
+                "calculate"
+              ],
+              "query": [
+                {
+                  "key": "weight",
+                  "value": "{{weight}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Calculate Detailed Quote",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"coordinates\": [\n    [{{originLongitude}}, {{originLatitude}}],\n    [{{destinationLongitude}}, {{destinationLatitude}}]\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/pricing/quote?weight={{weight}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pricing",
+                "quote"
+              ],
+              "query": [
+                {
+                  "key": "weight",
+                  "value": "{{weight}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Pricing Configs",
+      "item": [
+        {
+          "name": "Create Pricing Config",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.id) pm.collectionVariables.set('pricingId', json.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"baseFare\": 25.0,\n  \"ratePerKm\": 6.0,\n  \"ratePerKg\": 4.0,\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/pricing/configs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pricing",
+                "configs"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Pricing Configs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pricing/configs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pricing",
+                "configs"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Active Pricing Config",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pricing/configs/active",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pricing",
+                "configs",
+                "active"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Pricing Config",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"baseFare\": 30.0,\n  \"ratePerKm\": 7.5,\n  \"ratePerKg\": 5.0,\n  \"isActive\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/pricing/configs/{{pricingId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pricing",
+                "configs",
+                "{{pricingId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Activate Pricing Config",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pricing/configs/{{pricingId}}/activate",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pricing",
+                "configs",
+                "{{pricingId}}",
+                "activate"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Pricing Config",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/pricing/configs/{{pricingId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "pricing",
+                "configs",
+                "{{pricingId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8087",
+      "type": "string"
+    },
+    {
+      "key": "pricingId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "weight",
+      "value": "2.5",
+      "type": "string"
+    },
+    {
+      "key": "originLatitude",
+      "value": "30.0561",
+      "type": "string"
+    },
+    {
+      "key": "originLongitude",
+      "value": "31.3300",
+      "type": "string"
+    },
+    {
+      "key": "destinationLatitude",
+      "value": "29.9602",
+      "type": "string"
+    },
+    {
+      "key": "destinationLongitude",
+      "value": "31.2569",
+      "type": "string"
+    }
+  ]
+}

@@ -1,0 +1,137 @@
+package com.Fastlivery_Express.user.service.impl;
+
+import com.Fastlivery_Express.user.dto.DriverDto;
+import com.Fastlivery_Express.user.entity.Driver;
+import com.Fastlivery_Express.user.entity.User;
+import com.Fastlivery_Express.user.exception.UserAlreadyExistsException;
+import com.Fastlivery_Express.user.exception.UserEmailAlreadyUsed;
+import com.Fastlivery_Express.user.exception.UserNotFoundException;
+import com.Fastlivery_Express.user.mapper.DriverMapper;
+import com.Fastlivery_Express.user.mapper.UserMapper;
+import com.Fastlivery_Express.user.repository.UserRepository;
+import com.Fastlivery_Express.user.service.IDriverService;
+import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@AllArgsConstructor
+@Transactional
+public class DriverServiceImpl implements IDriverService {
+
+    private UserRepository userRepository;
+
+    @Override
+    public DriverDto createDriver(DriverDto driverDto) {
+        validateNewUser(driverDto.getEmail(), driverDto.getMobileNumber());
+        if (driverDto.getRole() == null) {
+            driverDto.setRole("ROLE_DRIVER");
+        }
+        Driver savedDriver = userRepository.save(DriverMapper.mapToDriver(driverDto));
+        return DriverMapper.mapToDriverDto(savedDriver);
+    }
+
+    @Override
+    public DriverDto getDriverById(String userId) {
+        return userRepository.findByUserId(userId)
+                .map(this::requireDriver)
+                .map(DriverMapper::mapToDriverDto)
+                .orElseThrow(() -> new UserNotFoundException("Driver with id " + userId + " not found."));
+    }
+
+    @Override
+    public DriverDto getDriverByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .map(this::requireDriver)
+                .map(DriverMapper::mapToDriverDto)
+                .orElseThrow(() -> new UserNotFoundException("Driver with email " + email + " not found."));
+    }
+
+    @Override
+    public DriverDto findNearestAvailableDriver(Double latitude, Double longitude) {
+        return userRepository.findAvailableDriversWithLocation()
+                .stream()
+                .min((first, second) -> Double.compare(
+                        distanceInKm(latitude, longitude, first.getCurrentLatitude(), first.getCurrentLongitude()),
+                        distanceInKm(latitude, longitude, second.getCurrentLatitude(), second.getCurrentLongitude())
+                ))
+                .map(DriverMapper::mapToDriverDto)
+                .orElseThrow(() -> new UserNotFoundException("No available driver found near the pickup location."));
+    }
+
+    @Override
+    public boolean updateDriver(String email, DriverDto driverDto) {
+        Driver driver = userRepository.findByEmail(email)
+                .map(this::requireDriver)
+                .orElseThrow(() -> new UserNotFoundException("Driver with email " + email + " not found."));
+
+        validateUniqueEmailForUpdate(email, driverDto.getEmail());
+        validateUniqueMobileForUpdate(driver.getMobileNumber(), driverDto.getMobileNumber());
+        UserMapper.mapUserFields(driverDto, driver);
+        DriverMapper.mapDriverFields(driverDto, driver);
+        userRepository.save(driver);
+        return true;
+    }
+
+    @Override
+    public DriverDto updateDriverAvailability(String userId, Boolean available) {
+        Driver driver = userRepository.findByUserId(userId)
+                .map(this::requireDriver)
+                .orElseThrow(() -> new UserNotFoundException("Driver with id " + userId + " not found."));
+        driver.setIsAvailable(available);
+        return DriverMapper.mapToDriverDto(userRepository.save(driver));
+    }
+
+    @Override
+    public boolean deleteDriver(String email) {
+        Driver driver = userRepository.findByEmail(email)
+                .map(this::requireDriver)
+                .orElseThrow(() -> new UserNotFoundException("Driver with email " + email + " not found."));
+        userRepository.delete(driver);
+        return true;
+    }
+
+    private Driver requireDriver(User user) {
+        if (user instanceof Driver driver) {
+            return driver;
+        }
+        throw new UserNotFoundException("The requested user is not a driver.");
+    }
+
+    private void validateNewUser(String email, String mobileNumber) {
+        if (userRepository.findByEmail(email).isPresent()) {
+            throw new UserAlreadyExistsException("User with email " + email + " already exists.");
+        }
+        if (userRepository.findByMobileNumber(mobileNumber).isPresent()) {
+            throw new UserAlreadyExistsException("User with mobile number " + mobileNumber + " already exists.");
+        }
+    }
+
+    private void validateUniqueEmailForUpdate(String currentEmail, String newEmail) {
+        if (newEmail == null || newEmail.equals(currentEmail)) return;
+        if (userRepository.findByEmail(newEmail).isPresent()) {
+            throw new UserEmailAlreadyUsed("User with email " + newEmail + " already exists.");
+        }
+    }
+
+    private void validateUniqueMobileForUpdate(String currentMobileNumber, String newMobileNumber) {
+        if (newMobileNumber == null || newMobileNumber.equals(currentMobileNumber)) return;
+        if (userRepository.findByMobileNumber(newMobileNumber).isPresent()) {
+            throw new UserAlreadyExistsException("User with mobile number " + newMobileNumber + " already exists.");
+        }
+    }
+
+    private double distanceInKm(Double firstLatitude, Double firstLongitude, Double secondLatitude, Double secondLongitude) {
+        double earthRadiusKm = 6371.0;
+        double latDistance = Math.toRadians(secondLatitude - firstLatitude);
+        double lonDistance = Math.toRadians(secondLongitude - firstLongitude);
+        double firstLatRadians = Math.toRadians(firstLatitude);
+        double secondLatRadians = Math.toRadians(secondLatitude);
+
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(firstLatRadians) * Math.cos(secondLatRadians)
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return earthRadiusKm * c;
+    }
+}

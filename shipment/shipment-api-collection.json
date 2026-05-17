@@ -1,0 +1,299 @@
+{
+  "info": {
+    "_postman_id": "5a7e6a47-f4c0-41e6-8f40-3c46bce74031",
+    "name": "Fastlivery Express - Shipment Service",
+    "description": "Postman collection for the Fastlivery Express shipment microservice, including quote/request, confirm, and CRUD endpoints.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Order Flow",
+      "item": [
+        {
+          "name": "Request Shipment Quote and Assign Driver",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.shipment && json.shipment.id) {",
+                  "    pm.collectionVariables.set('shipmentId', json.shipment.id);",
+                  "  }",
+                  "  if (json.shipment && json.shipment.trackingNumber) {",
+                  "    pm.collectionVariables.set('trackingNumber', json.shipment.trackingNumber);",
+                  "  }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": \"{{customerId}}\",\n  \"originAddress\": \"Nasr City, Cairo\",\n  \"destinationAddress\": \"Maadi, Cairo\",\n  \"originLatitude\": {{originLatitude}},\n  \"originLongitude\": {{originLongitude}},\n  \"destinationLatitude\": {{destinationLatitude}},\n  \"destinationLongitude\": {{destinationLongitude}},\n  \"totalWeight\": 2.5,\n  \"packageDetails\": \"Small fragile package\",\n  \"packageDimensions\": \"30x20x15 cm\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/request",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "shipments",
+                "request"
+              ]
+            },
+            "description": "Calculates price through pricing service, finds nearest available driver through user service, and creates a PENDING_CONFIRMATION shipment."
+          },
+          "response": []
+        },
+        {
+          "name": "Confirm Shipment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/{{shipmentId}}/confirm",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "shipments",
+                "{{shipmentId}}",
+                "confirm"
+              ]
+            },
+            "description": "Confirms a PENDING_CONFIRMATION shipment and marks the assigned driver unavailable."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Shipments CRUD",
+      "item": [
+        {
+          "name": "Create Shipment Directly",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.id) {",
+                  "    pm.collectionVariables.set('shipmentId', json.id);",
+                  "  }",
+                  "  if (json.trackingNumber) {",
+                  "    pm.collectionVariables.set('trackingNumber', json.trackingNumber);",
+                  "  }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"trackingNumber\": \"{{trackingNumber}}\",\n  \"customerId\": \"{{customerId}}\",\n  \"driverId\": \"{{driverId}}\",\n  \"originAddress\": \"Nasr City, Cairo\",\n  \"destinationAddress\": \"Maadi, Cairo\",\n  \"originLatitude\": {{originLatitude}},\n  \"originLongitude\": {{originLongitude}},\n  \"destinationLatitude\": {{destinationLatitude}},\n  \"destinationLongitude\": {{destinationLongitude}},\n  \"status\": \"PENDING_CONFIRMATION\",\n  \"totalPrice\": 120.50,\n  \"estimatedDeliveryTime\": \"2026-05-17T22:30:00\",\n  \"actualDeliveryTime\": null,\n  \"packageDetails\": \"Small fragile package\",\n  \"paymentStatus\": \"PENDING\",\n  \"customerFeedback\": null,\n  \"customerRating\": null,\n  \"driverFeedback\": null,\n  \"driverRating\": null,\n  \"cancellationReason\": null,\n  \"lastKnownLocation\": \"Nasr City, Cairo\",\n  \"totalWeight\": 2.5,\n  \"packageDimensions\": \"30x20x15 cm\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "shipments"
+              ]
+            },
+            "description": "Creates a shipment directly without calling pricing or nearest-driver assignment."
+          },
+          "response": []
+        },
+        {
+          "name": "Get Shipment by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/{{shipmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "shipments",
+                "{{shipmentId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Shipments by Customer ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/all?customer_id={{customerId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "shipments",
+                "all"
+              ],
+              "query": [
+                {
+                  "key": "customer_id",
+                  "value": "{{customerId}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Shipment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"trackingNumber\": \"{{trackingNumber}}\",\n  \"customerId\": \"{{customerId}}\",\n  \"driverId\": \"{{driverId}}\",\n  \"originAddress\": \"Nasr City, Cairo\",\n  \"destinationAddress\": \"Maadi, Cairo\",\n  \"originLatitude\": {{originLatitude}},\n  \"originLongitude\": {{originLongitude}},\n  \"destinationLatitude\": {{destinationLatitude}},\n  \"destinationLongitude\": {{destinationLongitude}},\n  \"status\": \"IN_TRANSIT\",\n  \"totalPrice\": 120.50,\n  \"estimatedDeliveryTime\": \"2026-05-17T22:30:00\",\n  \"actualDeliveryTime\": null,\n  \"packageDetails\": \"Small fragile package\",\n  \"paymentStatus\": \"PAID\",\n  \"customerFeedback\": null,\n  \"customerRating\": null,\n  \"driverFeedback\": null,\n  \"driverRating\": null,\n  \"cancellationReason\": null,\n  \"lastKnownLocation\": \"Salah Salem Road, Cairo\",\n  \"totalWeight\": 2.5,\n  \"packageDimensions\": \"30x20x15 cm\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/{{shipmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "shipments",
+                "{{shipmentId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Shipment",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/{{shipmentId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "shipments",
+                "{{shipmentId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Service Info",
+      "item": [
+        {
+          "name": "Get Contact Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/contact-info",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "shipments",
+                "contact-info"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8086",
+      "type": "string"
+    },
+    {
+      "key": "shipmentId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "trackingNumber",
+      "value": "FLX-POSTMAN01",
+      "type": "string"
+    },
+    {
+      "key": "customerId",
+      "value": "22222222-2222-2222-2222-222222222222",
+      "type": "string"
+    },
+    {
+      "key": "driverId",
+      "value": "33333333-3333-3333-3333-333333333333",
+      "type": "string"
+    },
+    {
+      "key": "originLatitude",
+      "value": "30.0561",
+      "type": "string"
+    },
+    {
+      "key": "originLongitude",
+      "value": "31.3300",
+      "type": "string"
+    },
+    {
+      "key": "destinationLatitude",
+      "value": "29.9602",
+      "type": "string"
+    },
+    {
+      "key": "destinationLongitude",
+      "value": "31.2569",
+      "type": "string"
+    }
+  ]
+}
