@@ -55,10 +55,4 @@ shipments:
     expiry-minutes: 10
     cleanup-fixed-delay-ms: 60000
 
-stripe:
-  secret-key: ${STRIPE_SECRET_KEY:sk_test_51TYaWLGiEfDo5eXhTvN2KB6TRuUnrkM9ZFKlXcSItGPRSoDQPSmMoW4iSHQtHcHiagIbl3mk46e8gIThXp8liuxO00Oq05Q0U9}
-  publishable-key: ${STRIPE_PUBLISHABLE_KEY:pk_test_51TYaWLGiEfDo5eXhxgAHSmQghrMuxsFSbcrtTdygXIQbr2z3z5sOCzxeQU3kjJQRqfF3Yq2JPRkadv98rlEP8vdk00cArJK7iS}
-  webhook-secret: ${STRIPE_WEBHOOK_SECRET:}
-  currency: egp
-  success-url: http://localhost:3000/payment/success?session_id={CHECKOUT_SESSION_ID}
-  cancel-url: http://localhost:3000/payment/cancel
+
