@@ -25,9 +25,12 @@ public class ShipmentDto {
     private String status;
     private Double totalPrice;
     private LocalDateTime estimatedDeliveryTime;
+    private LocalDateTime quoteExpiresAt;
     private LocalDateTime actualDeliveryTime;
     private String packageDetails;
     private String paymentStatus;
+    private String stripeCheckoutSessionId;
+    private String stripePaymentIntentId;
     private String customerFeedback;
     private Integer customerRating;
     private String driverFeedback;

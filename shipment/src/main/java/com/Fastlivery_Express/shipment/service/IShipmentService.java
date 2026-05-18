@@ -3,6 +3,7 @@ package com.Fastlivery_Express.shipment.service;
 import com.Fastlivery_Express.shipment.dto.ShipmentDto;
 import com.Fastlivery_Express.shipment.dto.ShipmentQuoteResponseDto;
 import com.Fastlivery_Express.shipment.dto.ShipmentRequestDto;
+import com.Fastlivery_Express.shipment.dto.ShipmentTrackingDto;
 
 import java.util.List;
 
@@ -15,4 +16,5 @@ public interface IShipmentService {
     List<ShipmentDto> getAllShipmentsByUserId(String userId);
     ShipmentQuoteResponseDto requestShipment(ShipmentRequestDto shipmentRequestDto);
     ShipmentDto confirmShipment(Long id);
+    ShipmentTrackingDto trackShipment(String trackingNumber);
 }

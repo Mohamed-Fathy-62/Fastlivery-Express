@@ -77,6 +77,92 @@
             "description": "Confirms a PENDING_CONFIRMATION shipment and marks the assigned driver unavailable."
           },
           "response": []
+        },
+        {
+          "name": "Create Stripe Checkout Session",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "  const json = pm.response.json();",
+                  "  if (json.checkoutSessionId) {",
+                  "    pm.collectionVariables.set('stripeCheckoutSessionId', json.checkoutSessionId);",
+                  "  }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/{{shipmentId}}/payment/checkout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "shipments",
+                "{{shipmentId}}",
+                "payment",
+                "checkout"
+              ]
+            },
+            "description": "Creates a Stripe Checkout Session and returns the hosted checkout URL."
+          },
+          "response": []
+        },
+        {
+          "name": "Sync Stripe Checkout Session",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/payment/sync?session_id={{stripeCheckoutSessionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "shipments",
+                "payment",
+                "sync"
+              ],
+              "query": [
+                {
+                  "key": "session_id",
+                  "value": "{{stripeCheckoutSessionId}}"
+                }
+              ]
+            },
+            "description": "Retrieves a Stripe Checkout Session and updates shipment paymentStatus."
+          },
+          "response": []
+        },
+        {
+          "name": "Track Shipment by Tracking Number",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/shipments/track/{{trackingNumber}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "shipments",
+                "track",
+                "{{trackingNumber}}"
+              ]
+            },
+            "description": "Returns shipment status, ETA, last known location, and assigned driver's latest location."
+          },
+          "response": []
         }
       ]
     },
@@ -263,6 +349,11 @@
     {
       "key": "trackingNumber",
       "value": "FLX-POSTMAN01",
+      "type": "string"
+    },
+    {
+      "key": "stripeCheckoutSessionId",
+      "value": "cs_test_example",
       "type": "string"
     },
     {

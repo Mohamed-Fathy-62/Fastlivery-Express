@@ -5,6 +5,7 @@ import com.Fastlivery_Express.shipment.dto.DriverDto;
 import com.Fastlivery_Express.shipment.dto.ShipmentDto;
 import com.Fastlivery_Express.shipment.dto.ShipmentQuoteResponseDto;
 import com.Fastlivery_Express.shipment.dto.ShipmentRequestDto;
+import com.Fastlivery_Express.shipment.dto.ShipmentTrackingDto;
 import com.Fastlivery_Express.shipment.entity.Shipment;
 import com.Fastlivery_Express.shipment.exception.ShipmentNotFoundException;
 import com.Fastlivery_Express.shipment.mapper.ShipmentMapper;
@@ -13,7 +14,9 @@ import com.Fastlivery_Express.shipment.service.IShipmentService;
 import com.Fastlivery_Express.shipment.service.clients.PricingFeignClient;
 import com.Fastlivery_Express.shipment.service.clients.UsersFeignClient;
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,13 +25,21 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Transactional
 public class ShipmentServiceImpl implements IShipmentService {
 
-    private ShipmentRepository shipmentRepository;
-    private PricingFeignClient pricingFeignClient;
-    private UsersFeignClient usersFeignClient;
+    private static final String STATUS_PENDING_CONFIRMATION = "PENDING_CONFIRMATION";
+    private static final String STATUS_CONFIRMED = "CONFIRMED";
+    private static final String STATUS_EXPIRED = "EXPIRED";
+    private static final String PAYMENT_PAID = "PAID";
+
+    private final ShipmentRepository shipmentRepository;
+    private final PricingFeignClient pricingFeignClient;
+    private final UsersFeignClient usersFeignClient;
+
+    @Value("${shipments.quote.expiry-minutes:10}")
+    private Long quoteExpiryMinutes;
 
     @Override
     public ShipmentDto getShipmentById(Long id) {
@@ -58,6 +69,7 @@ public class ShipmentServiceImpl implements IShipmentService {
             shipmentToUpdate.setStatus(shipmentDto.getStatus());
             shipmentToUpdate.setTotalPrice(shipmentDto.getTotalPrice());
             shipmentToUpdate.setEstimatedDeliveryTime(shipmentDto.getEstimatedDeliveryTime());
+            shipmentToUpdate.setQuoteExpiresAt(shipmentDto.getQuoteExpiresAt());
             shipmentToUpdate.setActualDeliveryTime(shipmentDto.getActualDeliveryTime());
             shipmentToUpdate.setPackageDetails(shipmentDto.getPackageDetails());
             shipmentToUpdate.setPaymentStatus(shipmentDto.getPaymentStatus());
@@ -103,6 +115,7 @@ public class ShipmentServiceImpl implements IShipmentService {
                 shipmentRequestDto.getOriginLatitude(),
                 shipmentRequestDto.getOriginLongitude()
         );
+        usersFeignClient.updateDriverAvailability(assignedDriver.getUserId(), false);
 
         Shipment shipment = new Shipment();
         shipment.setTrackingNumber(generateTrackingNumber());
@@ -114,7 +127,7 @@ public class ShipmentServiceImpl implements IShipmentService {
         shipment.setOriginLongitude(shipmentRequestDto.getOriginLongitude());
         shipment.setDestinationLatitude(shipmentRequestDto.getDestinationLatitude());
         shipment.setDestinationLongitude(shipmentRequestDto.getDestinationLongitude());
-        shipment.setStatus("PENDING_CONFIRMATION");
+        shipment.setStatus(STATUS_PENDING_CONFIRMATION);
         shipment.setTotalPrice(price);
         shipment.setPaymentStatus("PENDING");
         shipment.setPackageDetails(shipmentRequestDto.getPackageDetails());
@@ -122,13 +135,14 @@ public class ShipmentServiceImpl implements IShipmentService {
         shipment.setPackageDimensions(shipmentRequestDto.getPackageDimensions());
         shipment.setLastKnownLocation(shipmentRequestDto.getOriginAddress());
         shipment.setEstimatedDeliveryTime(LocalDateTime.now().plusHours(2));
+        shipment.setQuoteExpiresAt(LocalDateTime.now().plusMinutes(quoteExpiryMinutes));
 
         Shipment savedShipment = shipmentRepository.save(shipment);
         return new ShipmentQuoteResponseDto(
                 ShipmentMapper.mapToShipmentDto(savedShipment),
                 assignedDriver,
                 price,
-                "Shipment priced and nearest driver assigned. Confirm the shipment to reserve the driver."
+                "Shipment priced and driver reserved. Confirm before " + savedShipment.getQuoteExpiresAt() + " or the quote will expire."
         );
     }
 
@@ -137,14 +151,49 @@ public class ShipmentServiceImpl implements IShipmentService {
         Shipment shipment = shipmentRepository.findById(id)
                 .orElseThrow(() -> new ShipmentNotFoundException("Shipment with id " + id + " not found."));
 
-        if (!"PENDING_CONFIRMATION".equalsIgnoreCase(shipment.getStatus())) {
+        if (!STATUS_PENDING_CONFIRMATION.equalsIgnoreCase(shipment.getStatus())) {
             throw new IllegalStateException("Shipment with id " + id + " is not waiting for confirmation.");
         }
+        if (shipment.getQuoteExpiresAt() != null && shipment.getQuoteExpiresAt().isBefore(LocalDateTime.now())) {
+            expireShipment(shipment);
+            throw new IllegalStateException("Shipment quote with id " + id + " has expired. Please request a new quote.");
+        }
+        if (!PAYMENT_PAID.equalsIgnoreCase(shipment.getPaymentStatus())) {
+            throw new IllegalStateException("Shipment with id " + id + " must be paid before confirmation.");
+        }
 
-        usersFeignClient.updateDriverAvailability(shipment.getDriverId(), false);
-        shipment.setStatus("CONFIRMED");
+        shipment.setStatus(STATUS_CONFIRMED);
         Shipment savedShipment = shipmentRepository.save(shipment);
         return ShipmentMapper.mapToShipmentDto(savedShipment);
+    }
+
+    @Override
+    public ShipmentTrackingDto trackShipment(String trackingNumber) {
+        Shipment shipment = shipmentRepository.findByTrackingNumber(trackingNumber)
+                .orElseThrow(() -> new ShipmentNotFoundException("Shipment with tracking number " + trackingNumber + " not found."));
+        DriverDto driver = usersFeignClient.getDriverById(shipment.getDriverId());
+
+        return new ShipmentTrackingDto(
+                shipment.getTrackingNumber(),
+                shipment.getStatus(),
+                shipment.getEstimatedDeliveryTime(),
+                shipment.getActualDeliveryTime(),
+                shipment.getLastKnownLocation(),
+                shipment.getOriginAddress(),
+                shipment.getDestinationAddress(),
+                shipment.getDriverId(),
+                buildDriverName(driver),
+                driver.getMobileNumber(),
+                driver.getCurrentLocation(),
+                driver.getCurrentLatitude(),
+                driver.getCurrentLongitude()
+        );
+    }
+
+    @Scheduled(fixedDelayString = "${shipments.quote.cleanup-fixed-delay-ms:60000}")
+    public void expirePendingShipmentQuotes() {
+        shipmentRepository.findByStatusAndQuoteExpiresAtBefore(STATUS_PENDING_CONFIRMATION, LocalDateTime.now())
+                .forEach(this::expireShipment);
     }
 
     private CoordinatesDto buildCoordinates(ShipmentRequestDto shipmentRequestDto) {
@@ -156,5 +205,19 @@ public class ShipmentServiceImpl implements IShipmentService {
 
     private String generateTrackingNumber() {
         return "FLX-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    }
+
+    private String buildDriverName(DriverDto driver) {
+        return String.join(" ",
+                driver.getFirstname() != null ? driver.getFirstname() : "",
+                driver.getLastname() != null ? driver.getLastname() : ""
+        ).trim();
+    }
+
+    private void expireShipment(Shipment shipment) {
+        shipment.setStatus(STATUS_EXPIRED);
+        shipment.setCancellationReason("Quote expired before customer confirmation.");
+        shipmentRepository.save(shipment);
+        usersFeignClient.updateDriverAvailability(shipment.getDriverId(), true);
     }
 }

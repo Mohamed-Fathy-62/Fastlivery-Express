@@ -42,7 +42,6 @@ public class DriverController {
     @GetMapping("/nearest")
     public ResponseEntity<DriverDto> findNearestAvailableDriver(@RequestParam Double latitude,
                                                                 @RequestParam Double longitude) {
-        System.out.println("i am here");
         return ResponseEntity.ok(driverService.findNearestAvailableDriver(latitude, longitude));
     }
 
@@ -53,7 +52,7 @@ public class DriverController {
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(driverDto);
     }
 
-    @PatchMapping("/{id}/availability")
+    @PutMapping("/{id}/availability")
     public ResponseEntity<DriverDto> updateDriverAvailability(@Valid @PathVariable String id,
                                                               @RequestParam Boolean available) {
         return ResponseEntity.ok(driverService.updateDriverAvailability(id, available));

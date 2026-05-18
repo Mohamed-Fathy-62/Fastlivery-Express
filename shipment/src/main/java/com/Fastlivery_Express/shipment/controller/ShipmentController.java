@@ -4,7 +4,10 @@ import com.Fastlivery_Express.shipment.dto.ShipmentContactInfoDto;
 import com.Fastlivery_Express.shipment.dto.ShipmentDto;
 import com.Fastlivery_Express.shipment.dto.ShipmentQuoteResponseDto;
 import com.Fastlivery_Express.shipment.dto.ShipmentRequestDto;
+import com.Fastlivery_Express.shipment.dto.ShipmentTrackingDto;
+import com.Fastlivery_Express.shipment.dto.StripeCheckoutSessionDto;
 import com.Fastlivery_Express.shipment.service.IShipmentService;
+import com.Fastlivery_Express.shipment.service.IStripePaymentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +29,14 @@ import java.util.List;
 public class ShipmentController {
 
     private final IShipmentService iShipmentService;
+    private final IStripePaymentService stripePaymentService;
 
     @Autowired
     private ShipmentContactInfoDto shipmentContactInfoDto;
 
-    public ShipmentController(IShipmentService iShipmentService) {
+    public ShipmentController(IShipmentService iShipmentService, IStripePaymentService stripePaymentService) {
         this.iShipmentService = iShipmentService;
+        this.stripePaymentService = stripePaymentService;
     }
 
 
@@ -50,6 +55,28 @@ public class ShipmentController {
     @PostMapping("/{id}/confirm")
     public ResponseEntity<ShipmentDto> confirmShipment(@Valid @PathVariable Long id) {
         return ResponseEntity.ok(iShipmentService.confirmShipment(id));
+    }
+
+    @PostMapping("/{id}/payment/checkout")
+    public ResponseEntity<StripeCheckoutSessionDto> createStripeCheckoutSession(@Valid @PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(stripePaymentService.createCheckoutSession(id));
+    }
+
+    @PostMapping("/payment/sync")
+    public ResponseEntity<ShipmentDto> syncStripeCheckoutSession(@RequestParam("session_id") String checkoutSessionId) {
+        return ResponseEntity.ok(stripePaymentService.syncCheckoutSession(checkoutSessionId));
+    }
+
+    @PostMapping("/payment/webhook")
+    public ResponseEntity<ShipmentDto> handleStripeWebhook(@RequestBody String payload,
+                                                           @RequestHeader("Stripe-Signature") String signatureHeader) {
+        ShipmentDto updatedShipment = stripePaymentService.handleWebhook(payload, signatureHeader);
+        return ResponseEntity.ok(updatedShipment);
+    }
+
+    @GetMapping("/track/{trackingNumber}")
+    public ResponseEntity<ShipmentTrackingDto> trackShipment(@PathVariable String trackingNumber) {
+        return ResponseEntity.ok(iShipmentService.trackShipment(trackingNumber));
     }
 
     @GetMapping("/all")

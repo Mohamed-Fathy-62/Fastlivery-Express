@@ -25,9 +25,12 @@ public class ShipmentMapper {
         shipmentDto.setStatus(shipment.getStatus());
         shipmentDto.setTotalPrice(shipment.getTotalPrice());
         shipmentDto.setEstimatedDeliveryTime(shipment.getEstimatedDeliveryTime());
+        shipmentDto.setQuoteExpiresAt(shipment.getQuoteExpiresAt());
         shipmentDto.setActualDeliveryTime(shipment.getActualDeliveryTime());
         shipmentDto.setPackageDetails(shipment.getPackageDetails());
         shipmentDto.setPaymentStatus(shipment.getPaymentStatus());
+        shipmentDto.setStripeCheckoutSessionId(shipment.getStripeCheckoutSessionId());
+        shipmentDto.setStripePaymentIntentId(shipment.getStripePaymentIntentId());
         shipmentDto.setCustomerFeedback(shipment.getCustomerFeedback());
         shipmentDto.setCustomerRating(shipment.getCustomerRating());
         shipmentDto.setDriverFeedback(shipment.getDriverFeedback());
@@ -58,9 +61,12 @@ public class ShipmentMapper {
         shipment.setStatus(shipmentDto.getStatus());
         shipment.setTotalPrice(shipmentDto.getTotalPrice());
         shipment.setEstimatedDeliveryTime(shipmentDto.getEstimatedDeliveryTime());
+        shipment.setQuoteExpiresAt(shipmentDto.getQuoteExpiresAt());
         shipment.setActualDeliveryTime(shipmentDto.getActualDeliveryTime());
         shipment.setPackageDetails(shipmentDto.getPackageDetails());
         shipment.setPaymentStatus(shipmentDto.getPaymentStatus());
+        shipment.setStripeCheckoutSessionId(shipmentDto.getStripeCheckoutSessionId());
+        shipment.setStripePaymentIntentId(shipmentDto.getStripePaymentIntentId());
         shipment.setCustomerFeedback(shipmentDto.getCustomerFeedback());
         shipment.setCustomerRating(shipmentDto.getCustomerRating());
         shipment.setDriverFeedback(shipmentDto.getDriverFeedback());

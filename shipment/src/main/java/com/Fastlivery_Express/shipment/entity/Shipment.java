@@ -52,6 +52,9 @@ public class Shipment extends BaseEntity {
     @Column(name = "estimated_delivery_time")
     private LocalDateTime estimatedDeliveryTime; // e.g., "2024-06-30T18:30:00Z"
 
+    @Column(name = "quote_expires_at")
+    private LocalDateTime quoteExpiresAt;
+
     @Column(name = "actual_delivery_time")
     private LocalDateTime actualDeliveryTime; // e.g., "2024-06-30T18:30:00Z"
 
@@ -60,6 +63,12 @@ public class Shipment extends BaseEntity {
 
     @Column(name = "payment_status")
     private String paymentStatus; // e.g., pending, paid, failed
+
+    @Column(name = "stripe_checkout_session_id")
+    private String stripeCheckoutSessionId;
+
+    @Column(name = "stripe_payment_intent_id")
+    private String stripePaymentIntentId;
 
     @Column(name = "customer_feedback")
     private String customerFeedback; // e.g., "Great service!", "Package arrived late."
