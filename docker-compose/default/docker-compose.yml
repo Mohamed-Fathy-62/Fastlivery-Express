@@ -1,6 +1,8 @@
 services:
   configserver:
-    image: "mofathy62/configserver:v1"
+    build:
+      context: ../../configserver
+    image: fastlivery/configserver:local
     container_name: configserver-ms
     ports:
       - "8071:8071"
@@ -14,34 +16,161 @@ services:
       file: common-config.yml
       service: microservice-base-config
 
-  users:
-    image: "mohamedfathy62/user-service:v1"
-    container_name: users-ms
+  eurekaserver:
+    build:
+      context: ../../eurekaserver
+    image: fastlivery/eurekaserver:local
+    container_name: eurekaserver-ms
     ports:
-      - "8081:8081"
+      - "8070:8070"
     depends_on:
       configserver:
         condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "eurekaserver"
+    extends:
+      file: common-config.yml
+      service: microservice-configserver-config
+
+  gatewayserver:
+    build:
+      context: ../../gatewayserver
+    image: fastlivery/gatewayserver:local
+    container_name: gatewayserver-ms
+    ports:
+      - "8088:8088"
+    depends_on:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_started
+    environment:
+      SPRING_APPLICATION_NAME: "gatewayserver"
+    extends:
+      file: common-config.yml
+      service: microservice-eureka-config
+
+  users:
+    build:
+      context: ../../user
+    image: fastlivery/user-service:local
+    container_name: users-ms
+    ports:
+      - "8085:8085"
+    depends_on:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_started
     environment:
       SPRING_APPLICATION_NAME: "users"
     extends:
       file: common-config.yml
-      service: microservice-configserver-config
+      service: microservice-eureka-config
 
   shipments:
-    image: "mohamedfathy62/shipment-service:v1"
+    build:
+      context: ../../shipment
+    image: fastlivery/shipment-service:local
     container_name: shipments-ms
     ports:
-      - "8082:8082"
+      - "8086:8086"
     depends_on:
       configserver:
         condition: service_healthy
+      eurekaserver:
+        condition: service_started
     environment:
       SPRING_APPLICATION_NAME: "shipments"
     extends:
       file: common-config.yml
-      service: microservice-configserver-config
+      service: microservice-eureka-config
+
+  pricing:
+    build:
+      context: ../../pricing
+    image: fastlivery/pricing-service:local
+    container_name: pricing-ms
+    ports:
+      - "8087:8087"
+    depends_on:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_started
+    environment:
+      SPRING_APPLICATION_NAME: "pricing"
+    extends:
+      file: common-config.yml
+      service: microservice-eureka-config
+
+  prometheus:
+    image: prom/prometheus:v3.0.1
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
+    volumes:
+      - ../../observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
+  loki:
+    image: grafana/loki:3.3.2
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: "-config.file=/etc/loki/loki.yml"
+    volumes:
+      - ../../observability/loki/loki.yml:/etc/loki/loki.yml:ro
+      - loki-data:/loki
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
+  promtail:
+    image: grafana/promtail:3.3.2
+    container_name: promtail
+    command: "-config.file=/etc/promtail/promtail.yml"
+    volumes:
+      - ../../observability/promtail/promtail.yml:/etc/promtail/promtail.yml:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - loki
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
+  grafana:
+    image: grafana/grafana:11.4.0
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: false
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ../../observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ../../observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+      - loki
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
 
 networks:
   fastlivery:
     driver: "bridge"
+
+volumes:
+  prometheus-data:
+  loki-data:
+  grafana-data:

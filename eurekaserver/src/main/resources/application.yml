@@ -7,6 +7,9 @@ spring:
     import: "optional:configserver:http://localhost:8071/"
 
 management:
+  metrics:
+    tags:
+      application: ${spring.application.name}
   endpoints:
     web:
       exposure:
