@@ -16,14 +16,16 @@ public class GatewayserverApplication {
 	@Bean
 	public RouteLocator eazyBankRouteConfig(RouteLocatorBuilder routeLocatorBuilder) {
 		return routeLocatorBuilder.routes()
-
 				.route("users", r -> r
-						.path("/api/users/**")
-						.filters(f -> f.rewritePath("/(?<p>.*)", "/${p}")) // no-op
-						.uri("lb://USERS")).build();
-
-
-
+						.path("/api/v1/users/**", "/api/v1/customers/**", "/api/v1/drivers/**")
+						.uri("lb://USERS"))
+				.route("shipments", r -> r
+						.path("/api/v1/shipments/**")
+						.uri("lb://SHIPMENTS"))
+				.route("pricing", r -> r
+						.path("/api/v1/pricing/**")
+						.uri("lb://PRICING"))
+				.build();
 	}
 
 

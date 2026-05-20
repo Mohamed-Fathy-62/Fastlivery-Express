@@ -24,12 +24,13 @@
               "raw": "{\n  \"firstname\": \"Mohamed\",\n  \"lastname\": \"Fathy\",\n  \"password\": \"Pass@12345\",\n  \"email\": \"user@example.com\",\n  \"mobileNumber\": \"01012345678\",\n  \"profileImageUrl\": \"https://example.com/users/user.jpg\",\n  \"role\": \"ROLE_USER\",\n  \"status\": \"ACTIVE\",\n  \"preferredLanguage\": \"en\",\n  \"isVerified\": false\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/users/signup",
+              "raw": "{{baseUrl}}/api/v1/users/signup",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "users",
                 "signup"
               ]
@@ -43,12 +44,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/users/{{userId}}",
+              "raw": "{{baseUrl}}/api/v1/users/{{userId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "users",
                 "{{userId}}"
               ]
@@ -62,12 +64,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/users/email/{{userEmail}}",
+              "raw": "{{baseUrl}}/api/v1/users/email/{{userEmail}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "users",
                 "email",
                 "{{userEmail}}"
@@ -91,12 +94,13 @@
               "raw": "{\n  \"firstname\": \"Mohamed\",\n  \"lastname\": \"Fathy Updated\",\n  \"email\": \"user.updated@example.com\",\n  \"mobileNumber\": \"01012345678\",\n  \"profileImageUrl\": \"https://example.com/users/user-updated.jpg\",\n  \"role\": \"ROLE_USER\",\n  \"status\": \"ACTIVE\",\n  \"preferredLanguage\": \"en\",\n  \"isVerified\": true\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/users/{{userEmail}}",
+              "raw": "{{baseUrl}}/api/v1/users/{{userEmail}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "users",
                 "{{userEmail}}"
               ]
@@ -110,12 +114,13 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/users/{{userEmail}}",
+              "raw": "{{baseUrl}}/api/v1/users/{{userEmail}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "users",
                 "{{userEmail}}"
               ]
@@ -143,12 +148,13 @@
               "raw": "{\n  \"firstname\": \"Sara\",\n  \"lastname\": \"Ali\",\n  \"password\": \"Pass@12345\",\n  \"email\": \"customer@example.com\",\n  \"mobileNumber\": \"01023456789\",\n  \"profileImageUrl\": \"https://example.com/customers/customer.jpg\",\n  \"role\": \"ROLE_CUSTOMER\",\n  \"status\": \"ACTIVE\",\n  \"preferredLanguage\": \"en\",\n  \"isVerified\": false,\n  \"preferredPaymentMethod\": \"CARD\",\n  \"deliveryAddress\": \"12 Nile Street, Cairo\",\n  \"loyaltyPoints\": 0,\n  \"totalOrders\": 0,\n  \"totalSpent\": 0.0,\n  \"lastOrderTime\": null,\n  \"isPremiumMember\": false\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/customers",
+              "raw": "{{baseUrl}}/api/v1/customers",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "customers"
               ]
             }
@@ -161,12 +167,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/customers/{{customerId}}",
+              "raw": "{{baseUrl}}/api/v1/customers/{{customerId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "customers",
                 "{{customerId}}"
               ]
@@ -180,12 +187,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/customers/email/{{customerEmail}}",
+              "raw": "{{baseUrl}}/api/v1/customers/email/{{customerEmail}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "customers",
                 "email",
                 "{{customerEmail}}"
@@ -209,12 +217,13 @@
               "raw": "{\n  \"firstname\": \"Sara\",\n  \"lastname\": \"Ali Updated\",\n  \"email\": \"customer.updated@example.com\",\n  \"mobileNumber\": \"01023456789\",\n  \"profileImageUrl\": \"https://example.com/customers/customer-updated.jpg\",\n  \"role\": \"ROLE_CUSTOMER\",\n  \"status\": \"ACTIVE\",\n  \"preferredLanguage\": \"en\",\n  \"isVerified\": true,\n  \"preferredPaymentMethod\": \"CASH\",\n  \"deliveryAddress\": \"20 Tahrir Square, Cairo\",\n  \"loyaltyPoints\": 50,\n  \"totalOrders\": 3,\n  \"totalSpent\": 450.75,\n  \"lastOrderTime\": \"2026-05-17T20:00:00\",\n  \"isPremiumMember\": true\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/customers/{{customerEmail}}",
+              "raw": "{{baseUrl}}/api/v1/customers/{{customerEmail}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "customers",
                 "{{customerEmail}}"
               ]
@@ -228,12 +237,13 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/customers/{{customerEmail}}",
+              "raw": "{{baseUrl}}/api/v1/customers/{{customerEmail}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "customers",
                 "{{customerEmail}}"
               ]
@@ -261,12 +271,13 @@
               "raw": "{\n  \"firstname\": \"Omar\",\n  \"lastname\": \"Hassan\",\n  \"password\": \"Pass@12345\",\n  \"email\": \"driver@example.com\",\n  \"mobileNumber\": \"01034567890\",\n  \"profileImageUrl\": \"https://example.com/drivers/driver.jpg\",\n  \"role\": \"ROLE_DRIVER\",\n  \"status\": \"ACTIVE\",\n  \"preferredLanguage\": \"en\",\n  \"isVerified\": false,\n  \"licenseNumber\": \"EG-DRV-12345\",\n  \"vehicleType\": \"MOTORCYCLE\",\n  \"vehicleNumber\": \"ABC-1234\",\n  \"isAvailable\": true,\n  \"currentLocation\": \"Cairo\",\n  \"rating\": 0.0,\n  \"totalDeliveries\": 0,\n  \"totalDistanceTraveled\": 0.0,\n  \"lastActiveTime\": null\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/drivers",
+              "raw": "{{baseUrl}}/api/v1/drivers",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "drivers"
               ]
             }
@@ -279,12 +290,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/drivers/{{driverId}}",
+              "raw": "{{baseUrl}}/api/v1/drivers/{{driverId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "drivers",
                 "{{driverId}}"
               ]
@@ -298,12 +310,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/drivers/email/{{driverEmail}}",
+              "raw": "{{baseUrl}}/api/v1/drivers/email/{{driverEmail}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "drivers",
                 "email",
                 "{{driverEmail}}"
@@ -327,12 +340,13 @@
               "raw": "{\n  \"firstname\": \"Omar\",\n  \"lastname\": \"Hassan Updated\",\n  \"email\": \"driver.updated@example.com\",\n  \"mobileNumber\": \"01034567890\",\n  \"profileImageUrl\": \"https://example.com/drivers/driver-updated.jpg\",\n  \"role\": \"ROLE_DRIVER\",\n  \"status\": \"ACTIVE\",\n  \"preferredLanguage\": \"en\",\n  \"isVerified\": true,\n  \"licenseNumber\": \"EG-DRV-12345\",\n  \"vehicleType\": \"CAR\",\n  \"vehicleNumber\": \"XYZ-9876\",\n  \"isAvailable\": false,\n  \"currentLocation\": \"Giza\",\n  \"rating\": 4.7,\n  \"totalDeliveries\": 35,\n  \"totalDistanceTraveled\": 280.5,\n  \"lastActiveTime\": \"2026-05-17T20:30:00\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/drivers/{{driverEmail}}",
+              "raw": "{{baseUrl}}/api/v1/drivers/{{driverEmail}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "drivers",
                 "{{driverEmail}}"
               ]
@@ -346,12 +360,13 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/drivers/{{driverEmail}}",
+              "raw": "{{baseUrl}}/api/v1/drivers/{{driverEmail}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "drivers",
                 "{{driverEmail}}"
               ]

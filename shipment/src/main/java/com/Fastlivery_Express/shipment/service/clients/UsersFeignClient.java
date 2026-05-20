@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "users", url = "${clients.users.url:http://localhost:8085}")
 public interface UsersFeignClient {
 
-    @GetMapping("/api/drivers/nearest")
+    @GetMapping("/api/v1/drivers/nearest")
     DriverDto findNearestAvailableDriver(@RequestParam("latitude") Double latitude,
                                          @RequestParam("longitude") Double longitude);
 
-    @GetMapping("/api/drivers/{id}")
+    @GetMapping("/api/v1/drivers/{id}")
     DriverDto getDriverById(@PathVariable("id") String id);
 
-    @PutMapping("/api/drivers/{id}/availability")
+    @PutMapping("/api/v1/drivers/{id}/availability")
     DriverDto updateDriverAvailability(@PathVariable("id") String id,
                                        @RequestParam("available") Boolean available);
 }

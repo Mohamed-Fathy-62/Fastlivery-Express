@@ -43,12 +43,13 @@
               "raw": "{\n  \"customerId\": \"{{customerId}}\",\n  \"originAddress\": \"Nasr City, Cairo\",\n  \"destinationAddress\": \"Maadi, Cairo\",\n  \"originLatitude\": {{originLatitude}},\n  \"originLongitude\": {{originLongitude}},\n  \"destinationLatitude\": {{destinationLatitude}},\n  \"destinationLongitude\": {{destinationLongitude}},\n  \"totalWeight\": 2.5,\n  \"packageDetails\": \"Small fragile package\",\n  \"packageDimensions\": \"30x20x15 cm\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/shipments/request",
+              "raw": "{{baseUrl}}/api/v1/shipments/request",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "shipments",
                 "request"
               ]
@@ -63,12 +64,13 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/shipments/{{shipmentId}}/confirm",
+              "raw": "{{baseUrl}}/api/v1/shipments/{{shipmentId}}/confirm",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "shipments",
                 "{{shipmentId}}",
                 "confirm"
@@ -100,12 +102,13 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/shipments/{{shipmentId}}/payment/checkout",
+              "raw": "{{baseUrl}}/api/v1/shipments/{{shipmentId}}/payment/checkout",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "shipments",
                 "{{shipmentId}}",
                 "payment",
@@ -122,12 +125,13 @@
             "method": "POST",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/shipments/payment/sync?session_id={{stripeCheckoutSessionId}}",
+              "raw": "{{baseUrl}}/api/v1/shipments/payment/sync?session_id={{stripeCheckoutSessionId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "shipments",
                 "payment",
                 "sync"
@@ -149,12 +153,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/shipments/track/{{trackingNumber}}",
+              "raw": "{{baseUrl}}/api/v1/shipments/track/{{trackingNumber}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "shipments",
                 "track",
                 "{{trackingNumber}}"
@@ -203,12 +208,13 @@
               "raw": "{\n  \"trackingNumber\": \"{{trackingNumber}}\",\n  \"customerId\": \"{{customerId}}\",\n  \"driverId\": \"{{driverId}}\",\n  \"originAddress\": \"Nasr City, Cairo\",\n  \"destinationAddress\": \"Maadi, Cairo\",\n  \"originLatitude\": {{originLatitude}},\n  \"originLongitude\": {{originLongitude}},\n  \"destinationLatitude\": {{destinationLatitude}},\n  \"destinationLongitude\": {{destinationLongitude}},\n  \"status\": \"PENDING_CONFIRMATION\",\n  \"totalPrice\": 120.50,\n  \"estimatedDeliveryTime\": \"2026-05-17T22:30:00\",\n  \"actualDeliveryTime\": null,\n  \"packageDetails\": \"Small fragile package\",\n  \"paymentStatus\": \"PENDING\",\n  \"customerFeedback\": null,\n  \"customerRating\": null,\n  \"driverFeedback\": null,\n  \"driverRating\": null,\n  \"cancellationReason\": null,\n  \"lastKnownLocation\": \"Nasr City, Cairo\",\n  \"totalWeight\": 2.5,\n  \"packageDimensions\": \"30x20x15 cm\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/shipments",
+              "raw": "{{baseUrl}}/api/v1/shipments",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "shipments"
               ]
             },
@@ -222,12 +228,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/shipments/{{shipmentId}}",
+              "raw": "{{baseUrl}}/api/v1/shipments/{{shipmentId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "shipments",
                 "{{shipmentId}}"
               ]
@@ -241,12 +248,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/shipments/all?customer_id={{customerId}}",
+              "raw": "{{baseUrl}}/api/v1/shipments/all?customer_id={{customerId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "shipments",
                 "all"
               ],
@@ -275,12 +283,13 @@
               "raw": "{\n  \"trackingNumber\": \"{{trackingNumber}}\",\n  \"customerId\": \"{{customerId}}\",\n  \"driverId\": \"{{driverId}}\",\n  \"originAddress\": \"Nasr City, Cairo\",\n  \"destinationAddress\": \"Maadi, Cairo\",\n  \"originLatitude\": {{originLatitude}},\n  \"originLongitude\": {{originLongitude}},\n  \"destinationLatitude\": {{destinationLatitude}},\n  \"destinationLongitude\": {{destinationLongitude}},\n  \"status\": \"IN_TRANSIT\",\n  \"totalPrice\": 120.50,\n  \"estimatedDeliveryTime\": \"2026-05-17T22:30:00\",\n  \"actualDeliveryTime\": null,\n  \"packageDetails\": \"Small fragile package\",\n  \"paymentStatus\": \"PAID\",\n  \"customerFeedback\": null,\n  \"customerRating\": null,\n  \"driverFeedback\": null,\n  \"driverRating\": null,\n  \"cancellationReason\": null,\n  \"lastKnownLocation\": \"Salah Salem Road, Cairo\",\n  \"totalWeight\": 2.5,\n  \"packageDimensions\": \"30x20x15 cm\"\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/shipments/{{shipmentId}}",
+              "raw": "{{baseUrl}}/api/v1/shipments/{{shipmentId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "shipments",
                 "{{shipmentId}}"
               ]
@@ -294,12 +303,13 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/shipments/{{shipmentId}}",
+              "raw": "{{baseUrl}}/api/v1/shipments/{{shipmentId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "shipments",
                 "{{shipmentId}}"
               ]
@@ -318,12 +328,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/shipments/contact-info",
+              "raw": "{{baseUrl}}/api/v1/shipments/contact-info",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "shipments",
                 "contact-info"
               ]

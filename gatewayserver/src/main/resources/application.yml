@@ -19,7 +19,15 @@ spring:
         - id: USERS
           uri: lb://users
           predicates:
-            - Path=/api/users/**
+            - Path=/api/v1/users/**,/api/v1/customers/**,/api/v1/drivers/**
+        - id: SHIPMENTS
+          uri: lb://shipments
+          predicates:
+            - Path=/api/v1/shipments/**
+        - id: PRICING
+          uri: lb://pricing
+          predicates:
+            - Path=/api/v1/pricing/**
 
 
   data:

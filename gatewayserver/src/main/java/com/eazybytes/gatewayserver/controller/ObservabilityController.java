@@ -13,7 +13,7 @@ import java.time.Instant;
 import java.util.Map;
 
 @RestController
-@RequestMapping(path = "/api/observability", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/v1/observability", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ObservabilityController {
 
     private static final Logger log = LoggerFactory.getLogger(ObservabilityController.class);

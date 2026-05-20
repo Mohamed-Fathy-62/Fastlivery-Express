@@ -11,7 +11,7 @@ import java.util.List;
 @FeignClient("shipments")
 public interface ShipmentsFeignClient {
 
-    @GetMapping(value = "api/shipments/all", consumes = "application/json")
+    @GetMapping(value = "/api/v1/shipments/all", consumes = "application/json")
     public ResponseEntity<List<ShipmentDto>> getAllShipments(@RequestParam("customer_id") Long customerId);
 
 }

@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient(name = "pricing", url = "${clients.pricing.url:http://localhost:8087}")
 public interface PricingFeignClient {
 
-    @PostMapping(value = "/api/pricing/calculate", consumes = "application/json")
+    @PostMapping(value = "/api/v1/pricing/calculate", consumes = "application/json")
     Double calculatePrice(@RequestBody CoordinatesDto coordinatesDto, @RequestParam("weight") Double weight);
 }

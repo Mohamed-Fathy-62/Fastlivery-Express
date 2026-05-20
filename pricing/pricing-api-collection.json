@@ -24,12 +24,13 @@
               "raw": "{\n  \"coordinates\": [\n    [{{originLongitude}}, {{originLatitude}}],\n    [{{destinationLongitude}}, {{destinationLatitude}}]\n  ]\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/pricing/calculate?weight={{weight}}",
+              "raw": "{{baseUrl}}/api/v1/pricing/calculate?weight={{weight}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "pricing",
                 "calculate"
               ],
@@ -58,12 +59,13 @@
               "raw": "{\n  \"coordinates\": [\n    [{{originLongitude}}, {{originLatitude}}],\n    [{{destinationLongitude}}, {{destinationLatitude}}]\n  ]\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/pricing/quote?weight={{weight}}",
+              "raw": "{{baseUrl}}/api/v1/pricing/quote?weight={{weight}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "pricing",
                 "quote"
               ],
@@ -111,12 +113,13 @@
               "raw": "{\n  \"baseFare\": 25.0,\n  \"ratePerKm\": 6.0,\n  \"ratePerKg\": 4.0,\n  \"isActive\": true\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/pricing/configs",
+              "raw": "{{baseUrl}}/api/v1/pricing/configs",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "pricing",
                 "configs"
               ]
@@ -130,12 +133,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/pricing/configs",
+              "raw": "{{baseUrl}}/api/v1/pricing/configs",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "pricing",
                 "configs"
               ]
@@ -149,12 +153,13 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/pricing/configs/active",
+              "raw": "{{baseUrl}}/api/v1/pricing/configs/active",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "pricing",
                 "configs",
                 "active"
@@ -178,12 +183,13 @@
               "raw": "{\n  \"baseFare\": 30.0,\n  \"ratePerKm\": 7.5,\n  \"ratePerKg\": 5.0,\n  \"isActive\": true\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/pricing/configs/{{pricingId}}",
+              "raw": "{{baseUrl}}/api/v1/pricing/configs/{{pricingId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "pricing",
                 "configs",
                 "{{pricingId}}"
@@ -198,12 +204,13 @@
             "method": "PATCH",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/pricing/configs/{{pricingId}}/activate",
+              "raw": "{{baseUrl}}/api/v1/pricing/configs/{{pricingId}}/activate",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "pricing",
                 "configs",
                 "{{pricingId}}",
@@ -219,12 +226,13 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/pricing/configs/{{pricingId}}",
+              "raw": "{{baseUrl}}/api/v1/pricing/configs/{{pricingId}}",
               "host": [
                 "{{baseUrl}}"
               ],
               "path": [
                 "api",
+                "v1",
                 "pricing",
                 "configs",
                 "{{pricingId}}"

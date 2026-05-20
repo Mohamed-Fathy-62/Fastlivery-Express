@@ -20,7 +20,7 @@ import java.util.List;
         description = "CRUD REST APIs in Fastlivery to CREATE, UPDATE, FETCH AND DELETE pricing details"
 )
 @RestController
-@RequestMapping(path = "/api/pricing", produces = {MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(path = "/api/v1/pricing", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
 @AllArgsConstructor
 public class PricingController {

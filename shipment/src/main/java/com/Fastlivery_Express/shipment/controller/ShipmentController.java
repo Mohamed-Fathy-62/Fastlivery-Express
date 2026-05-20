@@ -24,7 +24,7 @@ import java.util.List;
         description = "CRUD REST APIs in Fastlivery to CREATE, UPDATE, FETCH AND DELETE shipment details"
 )
 @RestController
-@RequestMapping(path = "/api/shipments", produces = {MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(path = "/api/v1/shipments", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
 public class ShipmentController {
 

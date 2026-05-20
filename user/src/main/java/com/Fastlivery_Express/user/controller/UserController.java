@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
         description = "CRUD REST APIs in Fastlivery to CREATE, UPDATE, FETCH AND DELETE account details"
 )
 @RestController
-@RequestMapping(path = "/api/users", produces = {MediaType.APPLICATION_JSON_VALUE})
+@RequestMapping(path = "/api/v1/users", produces = {MediaType.APPLICATION_JSON_VALUE})
 @Validated
 @AllArgsConstructor
 public class UserController {
