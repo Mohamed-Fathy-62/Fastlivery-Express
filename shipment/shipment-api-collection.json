@@ -175,6 +175,60 @@
       "name": "Shipments CRUD",
       "item": [
         {
+          "name": "Search Shipments - Paginated and Filtered",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/shipments?page={{page}}&size={{size}}&sort={{shipmentSort}}&customerId={{customerId}}&driverId={{driverId}}&status={{shipmentStatus}}&paymentStatus={{paymentStatus}}&trackingNumber={{trackingNumber}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "shipments"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "size",
+                  "value": "{{size}}"
+                },
+                {
+                  "key": "sort",
+                  "value": "{{shipmentSort}}"
+                },
+                {
+                  "key": "customerId",
+                  "value": "{{customerId}}"
+                },
+                {
+                  "key": "driverId",
+                  "value": "{{driverId}}"
+                },
+                {
+                  "key": "status",
+                  "value": "{{shipmentStatus}}"
+                },
+                {
+                  "key": "paymentStatus",
+                  "value": "{{paymentStatus}}"
+                },
+                {
+                  "key": "trackingNumber",
+                  "value": "{{trackingNumber}}"
+                }
+              ]
+            },
+            "description": "Returns a Spring Page of shipments with optional customer, driver, status, payment status, and tracking number filters."
+          },
+          "response": []
+        },
+        {
           "name": "Create Shipment Directly",
           "event": [
             {
@@ -395,6 +449,31 @@
     {
       "key": "destinationLongitude",
       "value": "31.2569",
+      "type": "string"
+    },
+    {
+      "key": "page",
+      "value": "0",
+      "type": "string"
+    },
+    {
+      "key": "size",
+      "value": "20",
+      "type": "string"
+    },
+    {
+      "key": "shipmentSort",
+      "value": "id,desc",
+      "type": "string"
+    },
+    {
+      "key": "shipmentStatus",
+      "value": "PENDING_CONFIRMATION",
+      "type": "string"
+    },
+    {
+      "key": "paymentStatus",
+      "value": "PENDING",
       "type": "string"
     }
   ]

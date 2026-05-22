@@ -12,6 +12,9 @@ import com.Fastlivery_Express.pricing.repository.PricingRepository;
 import com.Fastlivery_Express.pricing.service.IPricingService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -85,6 +88,15 @@ public class PricingServiceImpl implements IPricingService {
                 .stream()
                 .map(PricingMapper::mapToPricingDto)
                 .toList();
+    }
+
+    @Override
+    public Page<PricingDto> getAllPricing(Boolean active, Pageable pageable) {
+        Specification<Pricing> specification = (root, query, criteriaBuilder) ->
+                active == null ? criteriaBuilder.conjunction() : criteriaBuilder.equal(root.get("isActive"), active);
+
+        return pricingRepository.findAll(specification, pageable)
+                .map(PricingMapper::mapToPricingDto);
     }
 
     @Override

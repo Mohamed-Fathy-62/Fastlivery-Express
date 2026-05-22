@@ -10,9 +10,16 @@ import com.Fastlivery_Express.user.mapper.DriverMapper;
 import com.Fastlivery_Express.user.mapper.UserMapper;
 import com.Fastlivery_Express.user.repository.UserRepository;
 import com.Fastlivery_Express.user.service.IDriverService;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -29,6 +36,13 @@ public class DriverServiceImpl implements IDriverService {
         }
         Driver savedDriver = userRepository.save(DriverMapper.mapToDriver(driverDto));
         return DriverMapper.mapToDriverDto(savedDriver);
+    }
+
+    @Override
+    public Page<DriverDto> searchDrivers(String status, Boolean available, String vehicleType, String email, String name, Pageable pageable) {
+        return userRepository.findAll(buildDriverSpecification(status, available, vehicleType, email, name), pageable)
+                .map(this::requireDriver)
+                .map(DriverMapper::mapToDriverDto);
     }
 
     @Override
@@ -133,5 +147,39 @@ public class DriverServiceImpl implements IDriverService {
                 * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
         return earthRadiusKm * c;
+    }
+
+    private Specification<User> buildDriverSpecification(String status, Boolean available, String vehicleType, String email, String name) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            var driverRoot = criteriaBuilder.treat(root, Driver.class);
+            predicates.add(root.type().in(Driver.class));
+
+            if (hasText(status)) {
+                predicates.add(criteriaBuilder.equal(criteriaBuilder.lower(root.get("status")), status.toLowerCase()));
+            }
+            if (available != null) {
+                predicates.add(criteriaBuilder.equal(driverRoot.get("isAvailable"), available));
+            }
+            if (hasText(vehicleType)) {
+                predicates.add(criteriaBuilder.equal(criteriaBuilder.lower(driverRoot.get("vehicleType")), vehicleType.toLowerCase()));
+            }
+            if (hasText(email)) {
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), "%" + email.toLowerCase() + "%"));
+            }
+            if (hasText(name)) {
+                String searchName = "%" + name.toLowerCase() + "%";
+                predicates.add(criteriaBuilder.or(
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("firstname")), searchName),
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("lastname")), searchName)
+                ));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+    private boolean hasText(String value) {
+        return value != null && !value.isBlank();
     }
 }

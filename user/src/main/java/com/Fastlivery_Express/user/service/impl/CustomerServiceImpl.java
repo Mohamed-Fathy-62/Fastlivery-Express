@@ -10,9 +10,16 @@ import com.Fastlivery_Express.user.mapper.CustomerMapper;
 import com.Fastlivery_Express.user.mapper.UserMapper;
 import com.Fastlivery_Express.user.repository.UserRepository;
 import com.Fastlivery_Express.user.service.ICustomerService;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -29,6 +36,13 @@ public class CustomerServiceImpl implements ICustomerService {
         }
         Customer savedCustomer = userRepository.save(CustomerMapper.mapToCustomer(customerDto));
         return CustomerMapper.mapToCustomerDto(savedCustomer);
+    }
+
+    @Override
+    public Page<CustomerDto> searchCustomers(String status, Boolean premium, String email, String name, Pageable pageable) {
+        return userRepository.findAll(buildCustomerSpecification(status, premium, email, name), pageable)
+                .map(this::requireCustomer)
+                .map(CustomerMapper::mapToCustomerDto);
     }
 
     @Override
@@ -98,5 +112,36 @@ public class CustomerServiceImpl implements ICustomerService {
         if (userRepository.findByMobileNumber(newMobileNumber).isPresent()) {
             throw new UserAlreadyExistsException("User with mobile number " + newMobileNumber + " already exists.");
         }
+    }
+
+    private Specification<User> buildCustomerSpecification(String status, Boolean premium, String email, String name) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            var customerRoot = criteriaBuilder.treat(root, Customer.class);
+            predicates.add(root.type().in(Customer.class));
+
+            if (hasText(status)) {
+                predicates.add(criteriaBuilder.equal(criteriaBuilder.lower(root.get("status")), status.toLowerCase()));
+            }
+            if (premium != null) {
+                predicates.add(criteriaBuilder.equal(customerRoot.get("isPremiumMember"), premium));
+            }
+            if (hasText(email)) {
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), "%" + email.toLowerCase() + "%"));
+            }
+            if (hasText(name)) {
+                String searchName = "%" + name.toLowerCase() + "%";
+                predicates.add(criteriaBuilder.or(
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("firstname")), searchName),
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("lastname")), searchName)
+                ));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+    private boolean hasText(String value) {
+        return value != null && !value.isBlank();
     }
 }

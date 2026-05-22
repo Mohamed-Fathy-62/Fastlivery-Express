@@ -10,6 +10,60 @@
       "name": "Users",
       "item": [
         {
+          "name": "Search Users - Paginated and Filtered",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users?page={{page}}&size={{size}}&sort={{userSort}}&status={{userStatus}}&role={{userRole}}&verified={{verified}}&email={{searchEmail}}&name={{searchName}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "size",
+                  "value": "{{size}}"
+                },
+                {
+                  "key": "sort",
+                  "value": "{{userSort}}"
+                },
+                {
+                  "key": "status",
+                  "value": "{{userStatus}}"
+                },
+                {
+                  "key": "role",
+                  "value": "{{userRole}}"
+                },
+                {
+                  "key": "verified",
+                  "value": "{{verified}}"
+                },
+                {
+                  "key": "email",
+                  "value": "{{searchEmail}}"
+                },
+                {
+                  "key": "name",
+                  "value": "{{searchName}}"
+                }
+              ]
+            },
+            "description": "Returns a Spring Page of users with optional status, role, verified, email, and name filters."
+          },
+          "response": []
+        },
+        {
           "name": "Create User",
           "request": {
             "method": "POST",
@@ -134,6 +188,56 @@
       "name": "Customers",
       "item": [
         {
+          "name": "Search Customers - Paginated and Filtered",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/customers?page={{page}}&size={{size}}&sort={{customerSort}}&status={{userStatus}}&premium={{premium}}&email={{searchEmail}}&name={{searchName}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "customers"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "size",
+                  "value": "{{size}}"
+                },
+                {
+                  "key": "sort",
+                  "value": "{{customerSort}}"
+                },
+                {
+                  "key": "status",
+                  "value": "{{userStatus}}"
+                },
+                {
+                  "key": "premium",
+                  "value": "{{premium}}"
+                },
+                {
+                  "key": "email",
+                  "value": "{{searchEmail}}"
+                },
+                {
+                  "key": "name",
+                  "value": "{{searchName}}"
+                }
+              ]
+            },
+            "description": "Returns a Spring Page of customers with optional status, premium, email, and name filters."
+          },
+          "response": []
+        },
+        {
           "name": "Create Customer",
           "request": {
             "method": "POST",
@@ -256,6 +360,60 @@
     {
       "name": "Drivers",
       "item": [
+        {
+          "name": "Search Drivers - Paginated and Filtered",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/drivers?page={{page}}&size={{size}}&sort={{driverSort}}&status={{userStatus}}&available={{available}}&vehicleType={{vehicleType}}&email={{searchEmail}}&name={{searchName}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "drivers"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "size",
+                  "value": "{{size}}"
+                },
+                {
+                  "key": "sort",
+                  "value": "{{driverSort}}"
+                },
+                {
+                  "key": "status",
+                  "value": "{{userStatus}}"
+                },
+                {
+                  "key": "available",
+                  "value": "{{available}}"
+                },
+                {
+                  "key": "vehicleType",
+                  "value": "{{vehicleType}}"
+                },
+                {
+                  "key": "email",
+                  "value": "{{searchEmail}}"
+                },
+                {
+                  "key": "name",
+                  "value": "{{searchName}}"
+                }
+              ]
+            },
+            "description": "Returns a Spring Page of drivers with optional status, availability, vehicle type, email, and name filters."
+          },
+          "response": []
+        },
         {
           "name": "Create Driver",
           "request": {
@@ -412,6 +570,71 @@
     {
       "key": "driverEmail",
       "value": "driver@example.com",
+      "type": "string"
+    },
+    {
+      "key": "page",
+      "value": "0",
+      "type": "string"
+    },
+    {
+      "key": "size",
+      "value": "20",
+      "type": "string"
+    },
+    {
+      "key": "userSort",
+      "value": "firstname,asc",
+      "type": "string"
+    },
+    {
+      "key": "customerSort",
+      "value": "firstname,asc",
+      "type": "string"
+    },
+    {
+      "key": "driverSort",
+      "value": "rating,desc",
+      "type": "string"
+    },
+    {
+      "key": "userStatus",
+      "value": "ACTIVE",
+      "type": "string"
+    },
+    {
+      "key": "userRole",
+      "value": "ROLE_USER",
+      "type": "string"
+    },
+    {
+      "key": "verified",
+      "value": "true",
+      "type": "string"
+    },
+    {
+      "key": "premium",
+      "value": "false",
+      "type": "string"
+    },
+    {
+      "key": "available",
+      "value": "true",
+      "type": "string"
+    },
+    {
+      "key": "vehicleType",
+      "value": "CAR",
+      "type": "string"
+    },
+    {
+      "key": "searchEmail",
+      "value": "example.com",
+      "type": "string"
+    },
+    {
+      "key": "searchName",
+      "value": "Mohamed",
       "type": "string"
     }
   ]

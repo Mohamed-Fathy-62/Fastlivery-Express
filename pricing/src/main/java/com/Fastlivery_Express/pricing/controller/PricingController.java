@@ -7,6 +7,9 @@ import com.Fastlivery_Express.pricing.service.IPricingService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -47,8 +50,9 @@ public class PricingController {
     }
 
     @GetMapping("/configs")
-    public ResponseEntity<List<PricingDto>> getAllPricing() {
-        return ResponseEntity.ok(iPricingService.getAllPricing());
+    public ResponseEntity<Page<PricingDto>> getAllPricing(@RequestParam(required = false) Boolean active,
+                                                          @ParameterObject Pageable pageable) {
+        return ResponseEntity.ok(iPricingService.getAllPricing(active, pageable));
     }
 
     @GetMapping("/configs/active")

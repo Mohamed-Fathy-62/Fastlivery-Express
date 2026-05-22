@@ -10,6 +10,9 @@ import com.Fastlivery_Express.shipment.service.IShipmentService;
 import com.Fastlivery_Express.shipment.service.IStripePaymentService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -83,6 +86,18 @@ public class ShipmentController {
     public ResponseEntity<List<ShipmentDto>> getAllShipments(@RequestParam("customer_id") String customerId) {
         List<ShipmentDto> shipments = iShipmentService.getAllShipmentsByUserId(customerId);
         return ResponseEntity.ok(shipments);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<ShipmentDto>> searchShipments(@RequestParam(required = false) String customerId,
+                                                             @RequestParam(required = false) String driverId,
+                                                             @RequestParam(required = false) String status,
+                                                             @RequestParam(required = false) String paymentStatus,
+                                                             @RequestParam(required = false) String trackingNumber,
+                                                             @ParameterObject Pageable pageable) {
+        return ResponseEntity.ok(iShipmentService.searchShipments(
+                customerId, driverId, status, paymentStatus, trackingNumber, pageable
+        ));
     }
 
     @GetMapping("/{id}")

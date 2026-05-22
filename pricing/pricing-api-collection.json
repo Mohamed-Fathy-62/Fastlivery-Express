@@ -85,6 +85,45 @@
       "name": "Pricing Configs",
       "item": [
         {
+          "name": "Search Pricing Configs - Paginated and Filtered",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/pricing/configs?page={{page}}&size={{size}}&sort={{pricingSort}}&active={{pricingActive}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "pricing",
+                "configs"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "{{page}}"
+                },
+                {
+                  "key": "size",
+                  "value": "{{size}}"
+                },
+                {
+                  "key": "sort",
+                  "value": "{{pricingSort}}"
+                },
+                {
+                  "key": "active",
+                  "value": "{{pricingActive}}"
+                }
+              ]
+            },
+            "description": "Returns a Spring Page of pricing configurations with optional active filter."
+          },
+          "response": []
+        },
+        {
           "name": "Create Pricing Config",
           "event": [
             {
@@ -279,6 +318,26 @@
     {
       "key": "destinationLongitude",
       "value": "31.2569",
+      "type": "string"
+    },
+    {
+      "key": "page",
+      "value": "0",
+      "type": "string"
+    },
+    {
+      "key": "size",
+      "value": "20",
+      "type": "string"
+    },
+    {
+      "key": "pricingSort",
+      "value": "id,desc",
+      "type": "string"
+    },
+    {
+      "key": "pricingActive",
+      "value": "true",
       "type": "string"
     }
   ]

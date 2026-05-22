@@ -8,10 +8,16 @@ import com.Fastlivery_Express.user.exception.UserNotFoundException;
 import com.Fastlivery_Express.user.mapper.UserMapper;
 import com.Fastlivery_Express.user.repository.UserRepository;
 import com.Fastlivery_Express.user.service.IUserService;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,6 +37,12 @@ public class UserServiceImpl implements IUserService {
         User user = UserMapper.mapToUser(userDto);
         User savedUser = userRepository.save(user);
         return UserMapper.mapToUserDto(savedUser);
+    }
+
+    @Override
+    public Page<UserDto> searchUsers(String status, String role, Boolean verified, String email, String name, Pageable pageable) {
+        return userRepository.findAll(buildUserSpecification(status, role, verified, email, name), pageable)
+                .map(UserMapper::mapToUserDto);
     }
 
     @Override
@@ -83,5 +95,37 @@ public class UserServiceImpl implements IUserService {
         if (userRepository.findByMobileNumber(newMobileNumber).isPresent()) {
             throw new UserAlreadyExistsException("User with mobile number " + newMobileNumber + " already exists.");
         }
+    }
+
+    private Specification<User> buildUserSpecification(String status, String role, Boolean verified, String email, String name) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (hasText(status)) {
+                predicates.add(criteriaBuilder.equal(criteriaBuilder.lower(root.get("status")), status.toLowerCase()));
+            }
+            if (hasText(role)) {
+                predicates.add(criteriaBuilder.equal(criteriaBuilder.lower(root.get("role")), role.toLowerCase()));
+            }
+            if (verified != null) {
+                predicates.add(criteriaBuilder.equal(root.get("isVerified"), verified));
+            }
+            if (hasText(email)) {
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("email")), "%" + email.toLowerCase() + "%"));
+            }
+            if (hasText(name)) {
+                String searchName = "%" + name.toLowerCase() + "%";
+                predicates.add(criteriaBuilder.or(
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("firstname")), searchName),
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("lastname")), searchName)
+                ));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+    private boolean hasText(String value) {
+        return value != null && !value.isBlank();
     }
 }

@@ -5,6 +5,9 @@ import com.Fastlivery_Express.user.service.IUserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +31,16 @@ public class UserController {
     public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
         UserDto created = userService.createUser(userDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<UserDto>> searchUsers(@RequestParam(required = false) String status,
+                                                     @RequestParam(required = false) String role,
+                                                     @RequestParam(required = false) Boolean verified,
+                                                     @RequestParam(required = false) String email,
+                                                     @RequestParam(required = false) String name,
+                                                     @ParameterObject Pageable pageable) {
+        return ResponseEntity.ok(userService.searchUsers(status, role, verified, email, name, pageable));
     }
 
     //-----------------------------------------------------

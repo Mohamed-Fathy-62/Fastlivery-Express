@@ -5,6 +5,9 @@ import com.Fastlivery_Express.user.service.IDriverService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +30,16 @@ public class DriverController {
     public ResponseEntity<DriverDto> createDriver(@Valid @RequestBody DriverDto driverDto) {
         DriverDto created = driverService.createDriver(driverDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<DriverDto>> searchDrivers(@RequestParam(required = false) String status,
+                                                         @RequestParam(required = false) Boolean available,
+                                                         @RequestParam(required = false) String vehicleType,
+                                                         @RequestParam(required = false) String email,
+                                                         @RequestParam(required = false) String name,
+                                                         @ParameterObject Pageable pageable) {
+        return ResponseEntity.ok(driverService.searchDrivers(status, available, vehicleType, email, name, pageable));
     }
 
     @GetMapping("/{id}")

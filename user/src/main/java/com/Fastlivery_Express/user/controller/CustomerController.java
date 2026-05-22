@@ -5,6 +5,9 @@ import com.Fastlivery_Express.user.service.ICustomerService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +30,15 @@ public class CustomerController {
     public ResponseEntity<CustomerDto> createCustomer(@Valid @RequestBody CustomerDto customerDto) {
         CustomerDto created = customerService.createCustomer(customerDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @GetMapping
+    public ResponseEntity<Page<CustomerDto>> searchCustomers(@RequestParam(required = false) String status,
+                                                            @RequestParam(required = false) Boolean premium,
+                                                            @RequestParam(required = false) String email,
+                                                            @RequestParam(required = false) String name,
+                                                            @ParameterObject Pageable pageable) {
+        return ResponseEntity.ok(customerService.searchCustomers(status, premium, email, name, pageable));
     }
 
     @GetMapping("/{id}")

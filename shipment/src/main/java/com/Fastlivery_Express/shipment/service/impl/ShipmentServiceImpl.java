@@ -13,13 +13,18 @@ import com.Fastlivery_Express.shipment.repository.ShipmentRepository;
 import com.Fastlivery_Express.shipment.service.IShipmentService;
 import com.Fastlivery_Express.shipment.service.clients.PricingFeignClient;
 import com.Fastlivery_Express.shipment.service.clients.UsersFeignClient;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -100,6 +105,13 @@ public class ShipmentServiceImpl implements IShipmentService {
     @Override
     public List<ShipmentDto> getAllShipmentsByUserId(String customerId) {
         return ShipmentMapper.mapToListDtos(shipmentRepository.findByCustomerId(customerId));
+    }
+
+    @Override
+    public Page<ShipmentDto> searchShipments(String customerId, String driverId, String status,
+                                             String paymentStatus, String trackingNumber, Pageable pageable) {
+        return shipmentRepository.findAll(buildShipmentSpecification(customerId, driverId, status, paymentStatus, trackingNumber), pageable)
+                .map(ShipmentMapper::mapToShipmentDto);
     }
 
     @Override
@@ -219,5 +231,34 @@ public class ShipmentServiceImpl implements IShipmentService {
         shipment.setCancellationReason("Quote expired before customer confirmation.");
         shipmentRepository.save(shipment);
         usersFeignClient.updateDriverAvailability(shipment.getDriverId(), true);
+    }
+
+    private Specification<Shipment> buildShipmentSpecification(String customerId, String driverId, String status,
+                                                               String paymentStatus, String trackingNumber) {
+        return (root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (hasText(customerId)) {
+                predicates.add(criteriaBuilder.equal(root.get("customerId"), customerId));
+            }
+            if (hasText(driverId)) {
+                predicates.add(criteriaBuilder.equal(root.get("driverId"), driverId));
+            }
+            if (hasText(status)) {
+                predicates.add(criteriaBuilder.equal(criteriaBuilder.lower(root.get("status")), status.toLowerCase()));
+            }
+            if (hasText(paymentStatus)) {
+                predicates.add(criteriaBuilder.equal(criteriaBuilder.lower(root.get("paymentStatus")), paymentStatus.toLowerCase()));
+            }
+            if (hasText(trackingNumber)) {
+                predicates.add(criteriaBuilder.like(criteriaBuilder.lower(root.get("trackingNumber")), "%" + trackingNumber.toLowerCase() + "%"));
+            }
+
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        };
+    }
+
+    private boolean hasText(String value) {
+        return value != null && !value.isBlank();
     }
 }
