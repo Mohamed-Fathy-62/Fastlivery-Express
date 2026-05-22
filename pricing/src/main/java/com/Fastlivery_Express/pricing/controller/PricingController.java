@@ -1,5 +1,6 @@
 package com.Fastlivery_Express.pricing.controller;
 
+import com.Fastlivery_Express.pricing.dto.ApiResponse;
 import com.Fastlivery_Express.pricing.dto.PriceQuoteDto;
 import com.Fastlivery_Express.pricing.dto.PricingDto;
 import com.Fastlivery_Express.pricing.dto.ors_dtos.CoordinatesDto;
@@ -32,49 +33,55 @@ public class PricingController {
 
 
     @PostMapping("/calculate")
-    public ResponseEntity<Double> calculatePrice(@Valid @RequestBody CoordinatesDto coordinatesDto,
-                                                 @RequestParam(defaultValue = "1.0") Double weight) {
+    public ResponseEntity<ApiResponse<Double>> calculatePrice(@Valid @RequestBody CoordinatesDto coordinatesDto,
+                                                              @RequestParam(defaultValue = "1.0") Double weight) {
         Double price = iPricingService.calculatePrice(coordinatesDto, weight);
-        return ResponseEntity.ok(price);
+        return ResponseEntity.ok(ApiResponse.success("Price calculated successfully", price));
     }
 
     @PostMapping("/quote")
-    public ResponseEntity<PriceQuoteDto> calculateQuote(@Valid @RequestBody CoordinatesDto coordinatesDto,
-                                                        @RequestParam(defaultValue = "1.0") Double weight) {
-        return ResponseEntity.ok(iPricingService.calculateQuote(coordinatesDto, weight));
+    public ResponseEntity<ApiResponse<PriceQuoteDto>> calculateQuote(@Valid @RequestBody CoordinatesDto coordinatesDto,
+                                                                     @RequestParam(defaultValue = "1.0") Double weight) {
+        return ResponseEntity.ok(ApiResponse.success("Price quote calculated successfully",
+                iPricingService.calculateQuote(coordinatesDto, weight)));
     }
 
     @PostMapping("/configs")
-    public ResponseEntity<PricingDto> createPricing(@Valid @RequestBody PricingDto pricingDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(iPricingService.createPricing(pricingDto));
+    public ResponseEntity<ApiResponse<PricingDto>> createPricing(@Valid @RequestBody PricingDto pricingDto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Pricing configuration created successfully",
+                iPricingService.createPricing(pricingDto)));
     }
 
     @GetMapping("/configs")
-    public ResponseEntity<Page<PricingDto>> getAllPricing(@RequestParam(required = false) Boolean active,
-                                                          @ParameterObject Pageable pageable) {
-        return ResponseEntity.ok(iPricingService.getAllPricing(active, pageable));
+    public ResponseEntity<ApiResponse<Page<PricingDto>>> getAllPricing(@RequestParam(required = false) Boolean active,
+                                                                       @ParameterObject Pageable pageable) {
+        return ResponseEntity.ok(ApiResponse.success("Pricing configurations fetched successfully",
+                iPricingService.getAllPricing(active, pageable)));
     }
 
     @GetMapping("/configs/active")
-    public ResponseEntity<PricingDto> getActivePricing() {
-        return ResponseEntity.ok(iPricingService.getActivePricing());
+    public ResponseEntity<ApiResponse<PricingDto>> getActivePricing() {
+        return ResponseEntity.ok(ApiResponse.success("Active pricing configuration fetched successfully",
+                iPricingService.getActivePricing()));
     }
 
     @PutMapping("/configs/{id}")
-    public ResponseEntity<PricingDto> updatePricing(@PathVariable Long id,
-                                                    @Valid @RequestBody PricingDto pricingDto) {
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(iPricingService.updatePricing(id, pricingDto));
+    public ResponseEntity<ApiResponse<PricingDto>> updatePricing(@PathVariable Long id,
+                                                                 @Valid @RequestBody PricingDto pricingDto) {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(ApiResponse.success("Pricing configuration updated successfully",
+                iPricingService.updatePricing(id, pricingDto)));
     }
 
     @PatchMapping("/configs/{id}/activate")
-    public ResponseEntity<PricingDto> activatePricing(@PathVariable Long id) {
-        return ResponseEntity.ok(iPricingService.activatePricing(id));
+    public ResponseEntity<ApiResponse<PricingDto>> activatePricing(@PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.success("Pricing configuration activated successfully",
+                iPricingService.activatePricing(id)));
     }
 
     @DeleteMapping("/configs/{id}")
-    public ResponseEntity<Void> deletePricing(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deletePricing(@PathVariable Long id) {
         iPricingService.deletePricing(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success("Pricing configuration deleted successfully", null));
     }
 
 

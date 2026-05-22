@@ -1,5 +1,6 @@
 package com.Fastlivery_Express.user.service.clients;
 
+import com.Fastlivery_Express.user.dto.ApiResponse;
 import com.Fastlivery_Express.user.dto.ShipmentDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,6 @@ import java.util.List;
 public interface ShipmentsFeignClient {
 
     @GetMapping(value = "/api/v1/shipments/all", consumes = "application/json")
-    public ResponseEntity<List<ShipmentDto>> getAllShipments(@RequestParam("customer_id") Long customerId);
+    public ResponseEntity<ApiResponse<List<ShipmentDto>>> getAllShipments(@RequestParam("customer_id") Long customerId);
 
 }

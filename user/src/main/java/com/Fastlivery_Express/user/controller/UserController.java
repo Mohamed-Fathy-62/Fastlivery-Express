@@ -1,5 +1,6 @@
 package com.Fastlivery_Express.user.controller;
 
+import com.Fastlivery_Express.user.dto.ApiResponse;
 import com.Fastlivery_Express.user.dto.UserDto;
 import com.Fastlivery_Express.user.service.IUserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,48 +29,49 @@ public class UserController {
 
     //sign up new user in keycloak and create a new user profile in postgres
     @PostMapping("/signup")
-    public ResponseEntity<UserDto> createUser(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<ApiResponse<UserDto>> createUser(@Valid @RequestBody UserDto userDto) {
         UserDto created = userService.createUser(userDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("User created successfully", created));
     }
 
     @GetMapping
-    public ResponseEntity<Page<UserDto>> searchUsers(@RequestParam(required = false) String status,
-                                                     @RequestParam(required = false) String role,
-                                                     @RequestParam(required = false) Boolean verified,
-                                                     @RequestParam(required = false) String email,
-                                                     @RequestParam(required = false) String name,
-                                                     @ParameterObject Pageable pageable) {
-        return ResponseEntity.ok(userService.searchUsers(status, role, verified, email, name, pageable));
+    public ResponseEntity<ApiResponse<Page<UserDto>>> searchUsers(@RequestParam(required = false) String status,
+                                                                  @RequestParam(required = false) String role,
+                                                                  @RequestParam(required = false) Boolean verified,
+                                                                  @RequestParam(required = false) String email,
+                                                                  @RequestParam(required = false) String name,
+                                                                  @ParameterObject Pageable pageable) {
+        return ResponseEntity.ok(ApiResponse.success("Users fetched successfully",
+                userService.searchUsers(status, role, verified, email, name, pageable)));
     }
 
     //-----------------------------------------------------
     //get user profile by id
     @GetMapping("/{id}")
-    public ResponseEntity<UserDto> getUserById(@Valid @PathVariable String id) {
+    public ResponseEntity<ApiResponse<UserDto>> getUserById(@Valid @PathVariable String id) {
         UserDto userDto = userService.getUserById(id);
-        return ResponseEntity.ok(userDto);
+        return ResponseEntity.ok(ApiResponse.success("User fetched successfully", userDto));
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<UserDto> getUserByEmail(@Valid @PathVariable String email) {
+    public ResponseEntity<ApiResponse<UserDto>> getUserByEmail(@Valid @PathVariable String email) {
         UserDto userDto = userService.getUserByEmail(email);
-        return ResponseEntity.ok(userDto);
+        return ResponseEntity.ok(ApiResponse.success("User fetched successfully", userDto));
     }
 
 
 
     @PutMapping("/{email}")
-    public ResponseEntity<UserDto> updateUser(@Valid @PathVariable String email, @Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<ApiResponse<UserDto>> updateUser(@Valid @PathVariable String email, @Valid @RequestBody UserDto userDto) {
         boolean isUpdated = userService.updateUser(email, userDto);
         if (!isUpdated) return ResponseEntity.notFound().build();
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userDto);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(ApiResponse.success("User updated successfully", userDto));
     }
 
     @DeleteMapping("/{email}")
-    public ResponseEntity<Void> deleteUser(@Valid @PathVariable String email) {
+    public ResponseEntity<ApiResponse<Void>> deleteUser(@Valid @PathVariable String email) {
         userService.deleteUser(email);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success("User deleted successfully", null));
     }
 
 }

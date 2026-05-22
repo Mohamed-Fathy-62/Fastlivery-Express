@@ -1,5 +1,6 @@
 package com.Fastlivery_Express.shipment.controller;
 
+import com.Fastlivery_Express.shipment.dto.ApiResponse;
 import com.Fastlivery_Express.shipment.dto.ShipmentContactInfoDto;
 import com.Fastlivery_Express.shipment.dto.ShipmentDto;
 import com.Fastlivery_Express.shipment.dto.ShipmentQuoteResponseDto;
@@ -44,88 +45,90 @@ public class ShipmentController {
 
 
     @PostMapping
-    public ResponseEntity<ShipmentDto> createShipment(@Valid @RequestBody ShipmentDto shipmentDto) {
+    public ResponseEntity<ApiResponse<ShipmentDto>> createShipment(@Valid @RequestBody ShipmentDto shipmentDto) {
         ShipmentDto created = iShipmentService.createShipment(shipmentDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Shipment created successfully", created));
     }
 
     @PostMapping("/request")
-    public ResponseEntity<ShipmentQuoteResponseDto> requestShipment(@Valid @RequestBody ShipmentRequestDto shipmentRequestDto) {
+    public ResponseEntity<ApiResponse<ShipmentQuoteResponseDto>> requestShipment(@Valid @RequestBody ShipmentRequestDto shipmentRequestDto) {
         ShipmentQuoteResponseDto quote = iShipmentService.requestShipment(shipmentRequestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(quote);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Shipment quote created successfully", quote));
     }
 
     @PostMapping("/{id}/confirm")
-    public ResponseEntity<ShipmentDto> confirmShipment(@Valid @PathVariable Long id) {
-        return ResponseEntity.ok(iShipmentService.confirmShipment(id));
+    public ResponseEntity<ApiResponse<ShipmentDto>> confirmShipment(@Valid @PathVariable Long id) {
+        return ResponseEntity.ok(ApiResponse.success("Shipment confirmed successfully", iShipmentService.confirmShipment(id)));
     }
 
     @PostMapping("/{id}/payment/checkout")
-    public ResponseEntity<StripeCheckoutSessionDto> createStripeCheckoutSession(@Valid @PathVariable Long id) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(stripePaymentService.createCheckoutSession(id));
+    public ResponseEntity<ApiResponse<StripeCheckoutSessionDto>> createStripeCheckoutSession(@Valid @PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Stripe checkout session created successfully",
+                stripePaymentService.createCheckoutSession(id)));
     }
 
     @PostMapping("/payment/sync")
-    public ResponseEntity<ShipmentDto> syncStripeCheckoutSession(@RequestParam("session_id") String checkoutSessionId) {
-        return ResponseEntity.ok(stripePaymentService.syncCheckoutSession(checkoutSessionId));
+    public ResponseEntity<ApiResponse<ShipmentDto>> syncStripeCheckoutSession(@RequestParam("session_id") String checkoutSessionId) {
+        return ResponseEntity.ok(ApiResponse.success("Stripe checkout session synced successfully",
+                stripePaymentService.syncCheckoutSession(checkoutSessionId)));
     }
 
     @PostMapping("/payment/webhook")
-    public ResponseEntity<ShipmentDto> handleStripeWebhook(@RequestBody String payload,
-                                                           @RequestHeader("Stripe-Signature") String signatureHeader) {
+    public ResponseEntity<ApiResponse<ShipmentDto>> handleStripeWebhook(@RequestBody String payload,
+                                                                        @RequestHeader("Stripe-Signature") String signatureHeader) {
         ShipmentDto updatedShipment = stripePaymentService.handleWebhook(payload, signatureHeader);
-        return ResponseEntity.ok(updatedShipment);
+        return ResponseEntity.ok(ApiResponse.success("Stripe webhook handled successfully", updatedShipment));
     }
 
     @GetMapping("/track/{trackingNumber}")
-    public ResponseEntity<ShipmentTrackingDto> trackShipment(@PathVariable String trackingNumber) {
-        return ResponseEntity.ok(iShipmentService.trackShipment(trackingNumber));
+    public ResponseEntity<ApiResponse<ShipmentTrackingDto>> trackShipment(@PathVariable String trackingNumber) {
+        return ResponseEntity.ok(ApiResponse.success("Shipment tracking fetched successfully",
+                iShipmentService.trackShipment(trackingNumber)));
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<ShipmentDto>> getAllShipments(@RequestParam("customer_id") String customerId) {
+    public ResponseEntity<ApiResponse<List<ShipmentDto>>> getAllShipments(@RequestParam("customer_id") String customerId) {
         List<ShipmentDto> shipments = iShipmentService.getAllShipmentsByUserId(customerId);
-        return ResponseEntity.ok(shipments);
+        return ResponseEntity.ok(ApiResponse.success("Shipments fetched successfully", shipments));
     }
 
     @GetMapping
-    public ResponseEntity<Page<ShipmentDto>> searchShipments(@RequestParam(required = false) String customerId,
-                                                             @RequestParam(required = false) String driverId,
-                                                             @RequestParam(required = false) String status,
-                                                             @RequestParam(required = false) String paymentStatus,
-                                                             @RequestParam(required = false) String trackingNumber,
-                                                             @ParameterObject Pageable pageable) {
-        return ResponseEntity.ok(iShipmentService.searchShipments(
-                customerId, driverId, status, paymentStatus, trackingNumber, pageable
-        ));
+    public ResponseEntity<ApiResponse<Page<ShipmentDto>>> searchShipments(@RequestParam(required = false) String customerId,
+                                                                          @RequestParam(required = false) String driverId,
+                                                                          @RequestParam(required = false) String status,
+                                                                          @RequestParam(required = false) String paymentStatus,
+                                                                          @RequestParam(required = false) String trackingNumber,
+                                                                          @ParameterObject Pageable pageable) {
+        return ResponseEntity.ok(ApiResponse.success("Shipments fetched successfully",
+                iShipmentService.searchShipments(customerId, driverId, status, paymentStatus, trackingNumber, pageable)));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ShipmentDto> getShipment(@Valid @PathVariable Long id) {
+    public ResponseEntity<ApiResponse<ShipmentDto>> getShipment(@Valid @PathVariable Long id) {
         ShipmentDto shipmentDto = iShipmentService.getShipmentById(id);
         if (shipmentDto == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(shipmentDto);
+        return ResponseEntity.ok(ApiResponse.success("Shipment fetched successfully", shipmentDto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ShipmentDto> updateUser(@Valid @PathVariable Long id, @Valid @RequestBody ShipmentDto shipmentDto) {
+    public ResponseEntity<ApiResponse<ShipmentDto>> updateUser(@Valid @PathVariable Long id, @Valid @RequestBody ShipmentDto shipmentDto) {
         boolean isUpdated = iShipmentService.updateShipment(id, shipmentDto);
         if (!isUpdated) return ResponseEntity.notFound().build();
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(shipmentDto);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(ApiResponse.success("Shipment updated successfully", shipmentDto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteShipment(@Valid @PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteShipment(@Valid @PathVariable Long id) {
         boolean isDeleted = iShipmentService.deleteShipment(id);
         if (!isDeleted) return ResponseEntity.notFound().build();
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success("Shipment deleted successfully", null));
     }
 
     @GetMapping("/contact-info")
-    public ResponseEntity<ShipmentContactInfoDto> getContactInfo() {
+    public ResponseEntity<ApiResponse<ShipmentContactInfoDto>> getContactInfo() {
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(shipmentContactInfoDto);
+                .body(ApiResponse.success("Shipment contact info fetched successfully", shipmentContactInfoDto));
     }
 
 }

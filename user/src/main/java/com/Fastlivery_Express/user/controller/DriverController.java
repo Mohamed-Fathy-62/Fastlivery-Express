@@ -1,5 +1,6 @@
 package com.Fastlivery_Express.user.controller;
 
+import com.Fastlivery_Express.user.dto.ApiResponse;
 import com.Fastlivery_Express.user.dto.DriverDto;
 import com.Fastlivery_Express.user.service.IDriverService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,53 +28,56 @@ public class DriverController {
     private IDriverService driverService;
 
     @PostMapping
-    public ResponseEntity<DriverDto> createDriver(@Valid @RequestBody DriverDto driverDto) {
+    public ResponseEntity<ApiResponse<DriverDto>> createDriver(@Valid @RequestBody DriverDto driverDto) {
         DriverDto created = driverService.createDriver(driverDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Driver created successfully", created));
     }
 
     @GetMapping
-    public ResponseEntity<Page<DriverDto>> searchDrivers(@RequestParam(required = false) String status,
-                                                         @RequestParam(required = false) Boolean available,
-                                                         @RequestParam(required = false) String vehicleType,
-                                                         @RequestParam(required = false) String email,
-                                                         @RequestParam(required = false) String name,
-                                                         @ParameterObject Pageable pageable) {
-        return ResponseEntity.ok(driverService.searchDrivers(status, available, vehicleType, email, name, pageable));
+    public ResponseEntity<ApiResponse<Page<DriverDto>>> searchDrivers(@RequestParam(required = false) String status,
+                                                                      @RequestParam(required = false) Boolean available,
+                                                                      @RequestParam(required = false) String vehicleType,
+                                                                      @RequestParam(required = false) String email,
+                                                                      @RequestParam(required = false) String name,
+                                                                      @ParameterObject Pageable pageable) {
+        return ResponseEntity.ok(ApiResponse.success("Drivers fetched successfully",
+                driverService.searchDrivers(status, available, vehicleType, email, name, pageable)));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DriverDto> getDriverById(@Valid @PathVariable String id) {
-        return ResponseEntity.ok(driverService.getDriverById(id));
+    public ResponseEntity<ApiResponse<DriverDto>> getDriverById(@Valid @PathVariable String id) {
+        return ResponseEntity.ok(ApiResponse.success("Driver fetched successfully", driverService.getDriverById(id)));
     }
 
     @GetMapping("/email/{email}")
-    public ResponseEntity<DriverDto> getDriverByEmail(@Valid @PathVariable String email) {
-        return ResponseEntity.ok(driverService.getDriverByEmail(email));
+    public ResponseEntity<ApiResponse<DriverDto>> getDriverByEmail(@Valid @PathVariable String email) {
+        return ResponseEntity.ok(ApiResponse.success("Driver fetched successfully", driverService.getDriverByEmail(email)));
     }
 
     @GetMapping("/nearest")
-    public ResponseEntity<DriverDto> findNearestAvailableDriver(@RequestParam Double latitude,
-                                                                @RequestParam Double longitude) {
-        return ResponseEntity.ok(driverService.findNearestAvailableDriver(latitude, longitude));
+    public ResponseEntity<ApiResponse<DriverDto>> findNearestAvailableDriver(@RequestParam Double latitude,
+                                                                             @RequestParam Double longitude) {
+        return ResponseEntity.ok(ApiResponse.success("Nearest available driver fetched successfully",
+                driverService.findNearestAvailableDriver(latitude, longitude)));
     }
 
     @PutMapping("/{email}")
-    public ResponseEntity<DriverDto> updateDriver(@Valid @PathVariable String email,
-                                                  @Valid @RequestBody DriverDto driverDto) {
+    public ResponseEntity<ApiResponse<DriverDto>> updateDriver(@Valid @PathVariable String email,
+                                                               @Valid @RequestBody DriverDto driverDto) {
         driverService.updateDriver(email, driverDto);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(driverDto);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(ApiResponse.success("Driver updated successfully", driverDto));
     }
 
     @PutMapping("/{id}/availability")
-    public ResponseEntity<DriverDto> updateDriverAvailability(@Valid @PathVariable String id,
-                                                              @RequestParam Boolean available) {
-        return ResponseEntity.ok(driverService.updateDriverAvailability(id, available));
+    public ResponseEntity<ApiResponse<DriverDto>> updateDriverAvailability(@Valid @PathVariable String id,
+                                                                           @RequestParam Boolean available) {
+        return ResponseEntity.ok(ApiResponse.success("Driver availability updated successfully",
+                driverService.updateDriverAvailability(id, available)));
     }
 
     @DeleteMapping("/{email}")
-    public ResponseEntity<Void> deleteDriver(@Valid @PathVariable String email) {
+    public ResponseEntity<ApiResponse<Void>> deleteDriver(@Valid @PathVariable String email) {
         driverService.deleteDriver(email);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(ApiResponse.success("Driver deleted successfully", null));
     }
 }

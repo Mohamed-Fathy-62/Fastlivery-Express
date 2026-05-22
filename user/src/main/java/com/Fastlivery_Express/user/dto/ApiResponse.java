@@ -5,19 +5,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Map;
+
 @Schema(
-        name = "ErrorResponse",
-        description = "Schema to hold error response information"
+        name = "ApiResponse",
+        description = "Standard successful API response"
 )
 @Data
 @AllArgsConstructor
-public class ErrorResponseDto {
+public class ApiResponse<T> {
     private boolean success;
-    private int status;
-    private String error;
     private String message;
-    private String path;
-    private Map<String, String> validationErrors;
+    private T data;
     private LocalDateTime timestamp;
+
+    public static <T> ApiResponse<T> success(String message, T data) {
+        return new ApiResponse<>(true, message, data, LocalDateTime.now());
+    }
 }

@@ -32,43 +32,58 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
             String validationMsg = error.getDefaultMessage();
             validationErrors.put(fieldName, validationMsg);
         });
-        return new ResponseEntity<>(validationErrors, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(buildErrorResponse(
+                HttpStatus.BAD_REQUEST,
+                "VALIDATION_ERROR",
+                "Request validation failed",
+                request,
+                validationErrors
+        ), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleGlobalException(Exception exception,
                                                                             WebRequest webRequest) {
-        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
-                webRequest.getDescription(false),
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                exception.getMessage(),
-                LocalDateTime.now()
-        );
-        return new ResponseEntity<>(errorResponseDto, HttpStatus.INTERNAL_SERVER_ERROR);
+        return buildErrorResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_SERVER_ERROR", exception, webRequest);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleResourceNotFoundException(ResourceNotFoundException exception,
                                                                                  WebRequest webRequest) {
-        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
-                webRequest.getDescription(false),
-                HttpStatus.NOT_FOUND,
-                exception.getMessage(),
-                LocalDateTime.now()
-        );
-        return new ResponseEntity<>(errorResponseDto, HttpStatus.NOT_FOUND);
+        return buildErrorResponseEntity(HttpStatus.NOT_FOUND, "RESOURCE_NOT_FOUND", exception, webRequest);
     }
 
     @ExceptionHandler(ShipmentNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleShipmentNotFoundException(ShipmentNotFoundException exception,
                                                                         WebRequest webRequest){
-        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
-                webRequest.getDescription(false),
-                HttpStatus.NOT_FOUND,
-                exception.getMessage(),
-                LocalDateTime.now()
-        );
-        return new ResponseEntity<>(errorResponseDto, HttpStatus.NOT_FOUND);
+        return buildErrorResponseEntity(HttpStatus.NOT_FOUND, "SHIPMENT_NOT_FOUND", exception, webRequest);
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponseDto> handleIllegalStateException(IllegalStateException exception,
+                                                                        WebRequest webRequest) {
+        return buildErrorResponseEntity(HttpStatus.CONFLICT, "INVALID_SHIPMENT_STATE", exception, webRequest);
+    }
+
+    private ResponseEntity<ErrorResponseDto> buildErrorResponseEntity(HttpStatus status, String error,
+                                                                      Exception exception, WebRequest webRequest) {
+        return new ResponseEntity<>(buildErrorResponse(status, error, exception.getMessage(), webRequest, null), status);
+    }
+
+    private ErrorResponseDto buildErrorResponse(HttpStatus status, String error, String message,
+                                                WebRequest webRequest, Map<String, String> validationErrors) {
+        return new ErrorResponseDto(
+                false,
+                status.value(),
+                error,
+                message,
+                extractPath(webRequest),
+                validationErrors,
+                LocalDateTime.now()
+        );
+    }
+
+    private String extractPath(WebRequest webRequest) {
+        return webRequest.getDescription(false).replace("uri=", "");
+    }
 }

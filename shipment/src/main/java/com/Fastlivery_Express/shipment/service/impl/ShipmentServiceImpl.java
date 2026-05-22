@@ -122,11 +122,11 @@ public class ShipmentServiceImpl implements IShipmentService {
 
     @Override
     public ShipmentQuoteResponseDto requestShipment(ShipmentRequestDto shipmentRequestDto) {
-        Double price = pricingFeignClient.calculatePrice(buildCoordinates(shipmentRequestDto), shipmentRequestDto.getTotalWeight());
+        Double price = pricingFeignClient.calculatePrice(buildCoordinates(shipmentRequestDto), shipmentRequestDto.getTotalWeight()).getData();
         DriverDto assignedDriver = usersFeignClient.findNearestAvailableDriver(
                 shipmentRequestDto.getOriginLatitude(),
                 shipmentRequestDto.getOriginLongitude()
-        );
+        ).getData();
         usersFeignClient.updateDriverAvailability(assignedDriver.getUserId(), false);
 
         Shipment shipment = new Shipment();
@@ -183,7 +183,7 @@ public class ShipmentServiceImpl implements IShipmentService {
     public ShipmentTrackingDto trackShipment(String trackingNumber) {
         Shipment shipment = shipmentRepository.findByTrackingNumber(trackingNumber)
                 .orElseThrow(() -> new ShipmentNotFoundException("Shipment with tracking number " + trackingNumber + " not found."));
-        DriverDto driver = usersFeignClient.getDriverById(shipment.getDriverId());
+        DriverDto driver = usersFeignClient.getDriverById(shipment.getDriverId()).getData();
 
         return new ShipmentTrackingDto(
                 shipment.getTrackingNumber(),
