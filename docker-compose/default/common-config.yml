@@ -15,6 +15,7 @@ services:
     extends:
       service: microservice-base-config
     environment:
+      CONFIG_SERVER_HOST: configserver
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
 
@@ -22,4 +23,5 @@ services:
     extends:
       service: microservice-configserver-config
     environment:
+      EUREKA_SERVER_HOST: eurekaserver
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/

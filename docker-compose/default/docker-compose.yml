@@ -26,6 +26,12 @@ services:
     depends_on:
       configserver:
         condition: service_healthy
+    healthcheck:
+      test: "curl --fail --silent localhost:8070/actuator/health/readiness | grep UP || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
     environment:
       SPRING_APPLICATION_NAME: "eurekaserver"
     extends:
@@ -43,12 +49,32 @@ services:
       configserver:
         condition: service_healthy
       eurekaserver:
-        condition: service_started
+        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "gatewayserver"
+      REDIS_HOST: host.docker.internal
+      REDIS_PORT: 6379
+      SPRING_DATA_REDIS_HOST: host.docker.internal
+      SPRING_DATA_REDIS_PORT: 6379
     extends:
       file: common-config.yml
       service: microservice-eureka-config
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: "rabbitmq-diagnostics -q ping"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
 
   users:
     build:
@@ -61,7 +87,7 @@ services:
       configserver:
         condition: service_healthy
       eurekaserver:
-        condition: service_started
+        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "users"
     extends:
@@ -79,9 +105,18 @@ services:
       configserver:
         condition: service_healthy
       eurekaserver:
-        condition: service_started
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "shipments"
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_HOST: rabbitmq
+      CLIENTS_USERS_URL: http://users:8085
+      CLIENTS_PRICING_URL: http://pricing:8087
+      USERS_SERVICE_HOST: users
+      PRICING_SERVICE_HOST: pricing
     extends:
       file: common-config.yml
       service: microservice-eureka-config
@@ -97,9 +132,36 @@ services:
       configserver:
         condition: service_healthy
       eurekaserver:
-        condition: service_started
+        condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "pricing"
+      REDIS_HOST: host.docker.internal
+      REDIS_PORT: 6379
+      SPRING_DATA_REDIS_HOST: host.docker.internal
+      SPRING_DATA_REDIS_PORT: 6379
+    extends:
+      file: common-config.yml
+      service: microservice-eureka-config
+
+  notifications:
+    build:
+      context: ../../notification
+    image: fastlivery/notification-service:local
+    container_name: notifications-ms
+    ports:
+      - "8089:8089"
+    depends_on:
+      configserver:
+        condition: service_healthy
+      eurekaserver:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: "notifications"
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_HOST: rabbitmq
     extends:
       file: common-config.yml
       service: microservice-eureka-config

@@ -18,11 +18,11 @@
                 "exec": [
                   "if (pm.response.code === 201) {",
                   "  const json = pm.response.json();",
-                  "  if (json.shipment && json.shipment.id) {",
-                  "    pm.collectionVariables.set('shipmentId', json.shipment.id);",
+                  "  if (json.data && json.data.shipment && json.data.shipment.id) {",
+                  "    pm.collectionVariables.set('shipmentId', json.data.shipment.id);",
                   "  }",
-                  "  if (json.shipment && json.shipment.trackingNumber) {",
-                  "    pm.collectionVariables.set('trackingNumber', json.shipment.trackingNumber);",
+                  "  if (json.data && json.data.shipment && json.data.shipment.trackingNumber) {",
+                  "    pm.collectionVariables.set('trackingNumber', json.data.shipment.trackingNumber);",
                   "  }",
                   "}"
                 ],
@@ -89,8 +89,8 @@
                 "exec": [
                   "if (pm.response.code === 201) {",
                   "  const json = pm.response.json();",
-                  "  if (json.checkoutSessionId) {",
-                  "    pm.collectionVariables.set('stripeCheckoutSessionId', json.checkoutSessionId);",
+                  "  if (json.data && json.data.checkoutSessionId) {",
+                  "    pm.collectionVariables.set('stripeCheckoutSessionId', json.data.checkoutSessionId);",
                   "  }",
                   "}"
                 ],
@@ -237,11 +237,11 @@
                 "exec": [
                   "if (pm.response.code === 201) {",
                   "  const json = pm.response.json();",
-                  "  if (json.id) {",
-                  "    pm.collectionVariables.set('shipmentId', json.id);",
+                  "  if (json.data && json.data.id) {",
+                  "    pm.collectionVariables.set('shipmentId', json.data.id);",
                   "  }",
-                  "  if (json.trackingNumber) {",
-                  "    pm.collectionVariables.set('trackingNumber', json.trackingNumber);",
+                  "  if (json.data && json.data.trackingNumber) {",
+                  "    pm.collectionVariables.set('trackingNumber', json.data.trackingNumber);",
                   "  }",
                   "}"
                 ],

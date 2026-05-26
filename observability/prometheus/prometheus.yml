@@ -49,6 +49,13 @@ scrape_configs:
         labels:
           application: pricing
 
+  - job_name: fastlivery-notifications
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ["notifications:8089"]
+        labels:
+          application: notifications
+
   - job_name: fastlivery-localhost
     metrics_path: /actuator/prometheus
     static_configs:
@@ -59,5 +66,6 @@ scrape_configs:
           - "host.docker.internal:8086"
           - "host.docker.internal:8087"
           - "host.docker.internal:8088"
+          - "host.docker.internal:8089"
         labels:
           application: local-fastlivery

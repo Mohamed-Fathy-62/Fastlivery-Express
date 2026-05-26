@@ -6,7 +6,7 @@ spring:
   application:
     name: "gatewayserver"
   config:
-    import: "optional:configserver:http://localhost:8071/"
+    import: "optional:configserver:http://${CONFIG_SERVER_HOST:localhost}:8071/"
   cloud:
     gateway:
       server:
@@ -32,8 +32,8 @@ spring:
 
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
 
 eureka:
   instance:
@@ -42,7 +42,7 @@ eureka:
     fetchRegistry: true
     registerWithEureka: true
     serviceUrl:
-      defaultZone: http://localhost:8070/eureka/
+      defaultZone: http://${EUREKA_SERVER_HOST:localhost}:8070/eureka/
 
 management:
   metrics:

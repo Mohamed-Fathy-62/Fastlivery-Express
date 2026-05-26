@@ -5,7 +5,7 @@ spring:
   application:
     name: shipments
   datasource:
-    url: jdbc:postgresql://localhost:5432/fedb
+    url: jdbc:postgresql://host.docker.internal:5432/fedb
     username: postgres
     password: 622000
     driver-class-name: org.postgresql.Driver
@@ -17,7 +17,12 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   config:
-    import: "configserver:http://localhost:8071/"
+    import: "configserver:http://${CONFIG_SERVER_HOST:localhost}:8071/"
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: guest
+    password: guest
 management:
   metrics:
     tags:
@@ -40,7 +45,7 @@ eureka:
     fetchRegistry: true
     registerWithEureka: true
     serviceUrl:
-      defaultZone: http://localhost:8070/eureka/
+      defaultZone: http://${EUREKA_SERVER_HOST:localhost}:8070/eureka/
 
 info:
   app:
@@ -49,12 +54,15 @@ info:
 
 clients:
   users:
-    url: http://localhost:8085
+    url: http://${USERS_SERVICE_HOST:localhost}:8085
   pricing:
-    url: http://localhost:8087
+    url: http://${PRICING_SERVICE_HOST:localhost}:8087
 
 shipments:
   quote:
     expiry-minutes: 10
     cleanup-fixed-delay-ms: 60000
-
+  events:
+    exchange: fastlivery.shipments.exchange
+    queue: fastlivery.notifications.shipments.queue
+    routing-key: shipments.events

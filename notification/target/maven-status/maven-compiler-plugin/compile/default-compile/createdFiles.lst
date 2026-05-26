@@ -1,0 +1,4 @@
+com\Fastlivery_Express\notification\config\RabbitMqConfig.class
+com\Fastlivery_Express\shipment\event\ShipmentEvent.class
+com\Fastlivery_Express\notification\listener\ShipmentEventListener.class
+com\Fastlivery_Express\notification\NotificationApplication.class

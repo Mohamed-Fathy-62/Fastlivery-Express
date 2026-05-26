@@ -45,10 +45,10 @@ public class StripePaymentServiceImpl implements IStripePaymentService {
     @Value("${stripe.currency:egp}")
     private String currency;
 
-    @Value("${stripe.success-url}")
+    @Value("${stripe.success-url:http://www.google.com}")
     private String successUrl;
 
-    @Value("${stripe.cancel-url}")
+    @Value("${stripe.cancel-url:http://www.google.com}")
     private String cancelUrl;
 
     @PostConstruct

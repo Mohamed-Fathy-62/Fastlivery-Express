@@ -8,6 +8,7 @@ import com.Fastlivery_Express.shipment.dto.ShipmentRequestDto;
 import com.Fastlivery_Express.shipment.dto.ShipmentTrackingDto;
 import com.Fastlivery_Express.shipment.entity.Shipment;
 import com.Fastlivery_Express.shipment.exception.ShipmentNotFoundException;
+import com.Fastlivery_Express.shipment.event.ShipmentEventPublisher;
 import com.Fastlivery_Express.shipment.mapper.ShipmentMapper;
 import com.Fastlivery_Express.shipment.repository.ShipmentRepository;
 import com.Fastlivery_Express.shipment.service.IShipmentService;
@@ -38,10 +39,15 @@ public class ShipmentServiceImpl implements IShipmentService {
     private static final String STATUS_CONFIRMED = "CONFIRMED";
     private static final String STATUS_EXPIRED = "EXPIRED";
     private static final String PAYMENT_PAID = "PAID";
+    private static final String EVENT_SHIPMENT_CREATED = "SHIPMENT_CREATED";
+    private static final String EVENT_SHIPMENT_REQUESTED = "SHIPMENT_REQUESTED";
+    private static final String EVENT_SHIPMENT_CONFIRMED = "SHIPMENT_CONFIRMED";
+    private static final String EVENT_SHIPMENT_EXPIRED = "SHIPMENT_EXPIRED";
 
     private final ShipmentRepository shipmentRepository;
     private final PricingFeignClient pricingFeignClient;
     private final UsersFeignClient usersFeignClient;
+    private final ShipmentEventPublisher shipmentEventPublisher;
 
     @Value("${shipments.quote.expiry-minutes:10}")
     private Long quoteExpiryMinutes;
@@ -117,6 +123,7 @@ public class ShipmentServiceImpl implements IShipmentService {
     @Override
     public ShipmentDto createShipment(ShipmentDto shipmentDto) {
         Shipment savedShipment = shipmentRepository.save(ShipmentMapper.mapToShipment(shipmentDto));
+        shipmentEventPublisher.publish(EVENT_SHIPMENT_CREATED, savedShipment);
         return ShipmentMapper.mapToShipmentDto(savedShipment);
     }
 
@@ -150,6 +157,7 @@ public class ShipmentServiceImpl implements IShipmentService {
         shipment.setQuoteExpiresAt(LocalDateTime.now().plusMinutes(quoteExpiryMinutes));
 
         Shipment savedShipment = shipmentRepository.save(shipment);
+        shipmentEventPublisher.publish(EVENT_SHIPMENT_REQUESTED, savedShipment);
         return new ShipmentQuoteResponseDto(
                 ShipmentMapper.mapToShipmentDto(savedShipment),
                 assignedDriver,
@@ -176,6 +184,7 @@ public class ShipmentServiceImpl implements IShipmentService {
 
         shipment.setStatus(STATUS_CONFIRMED);
         Shipment savedShipment = shipmentRepository.save(shipment);
+        shipmentEventPublisher.publish(EVENT_SHIPMENT_CONFIRMED, savedShipment);
         return ShipmentMapper.mapToShipmentDto(savedShipment);
     }
 
@@ -230,6 +239,7 @@ public class ShipmentServiceImpl implements IShipmentService {
         shipment.setStatus(STATUS_EXPIRED);
         shipment.setCancellationReason("Quote expired before customer confirmation.");
         shipmentRepository.save(shipment);
+        shipmentEventPublisher.publish(EVENT_SHIPMENT_EXPIRED, shipment);
         usersFeignClient.updateDriverAvailability(shipment.getDriverId(), true);
     }
 
