@@ -25,6 +25,12 @@ management:
         enabled: true
 
 eureka:
+  instance:
+    hostname: ${EUREKA_SERVER_HOST:localhost}
   client:
     fetchRegistry: false
     registerWithEureka: false
+    serviceUrl:
+      defaultZone: http://${EUREKA_SERVER_HOST:localhost}:8070/eureka/
+    service-url:
+      defaultZone: http://${EUREKA_SERVER_HOST:localhost}:8070/eureka/

@@ -1,5 +1,6 @@
 package com.Fastlivery_Express.user.service;
 
+import com.Fastlivery_Express.user.dto.DriverLocationUpdateDto;
 import com.Fastlivery_Express.user.dto.DriverDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,5 +13,6 @@ public interface IDriverService {
     DriverDto findNearestAvailableDriver(Double latitude, Double longitude);
     boolean updateDriver(String email, DriverDto driverDto);
     DriverDto updateDriverAvailability(String userId, Boolean available);
+    DriverDto updateDriverLocation(String userId, DriverLocationUpdateDto locationUpdateDto);
     boolean deleteDriver(String email);
 }

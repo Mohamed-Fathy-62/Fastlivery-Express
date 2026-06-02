@@ -34,6 +34,11 @@ services:
       start_period: 20s
     environment:
       SPRING_APPLICATION_NAME: "eurekaserver"
+      EUREKA_CLIENT_FETCH_REGISTRY: false
+      EUREKA_CLIENT_REGISTER_WITH_EUREKA: false
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+      EUREKA_CLIENT_SERVICE_URL_DEFAULT_ZONE: http://eurekaserver:8070/eureka/
+      EUREKA_INSTANCE_HOSTNAME: eurekaserver
     extends:
       file: common-config.yml
       service: microservice-configserver-config

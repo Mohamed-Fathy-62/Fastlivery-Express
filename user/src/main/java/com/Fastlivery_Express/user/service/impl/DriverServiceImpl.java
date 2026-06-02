@@ -1,5 +1,6 @@
 package com.Fastlivery_Express.user.service.impl;
 
+import com.Fastlivery_Express.user.dto.DriverLocationUpdateDto;
 import com.Fastlivery_Express.user.dto.DriverDto;
 import com.Fastlivery_Express.user.entity.Driver;
 import com.Fastlivery_Express.user.entity.User;
@@ -10,6 +11,8 @@ import com.Fastlivery_Express.user.mapper.DriverMapper;
 import com.Fastlivery_Express.user.mapper.UserMapper;
 import com.Fastlivery_Express.user.repository.UserRepository;
 import com.Fastlivery_Express.user.service.IDriverService;
+import com.Fastlivery_Express.user.service.clients.ShipmentsFeignClient;
+import feign.FeignException;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -18,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +31,7 @@ import java.util.List;
 public class DriverServiceImpl implements IDriverService {
 
     private UserRepository userRepository;
+    private ShipmentsFeignClient shipmentsFeignClient;
 
     @Override
     public DriverDto createDriver(DriverDto driverDto) {
@@ -94,6 +99,21 @@ public class DriverServiceImpl implements IDriverService {
                 .orElseThrow(() -> new UserNotFoundException("Driver with id " + userId + " not found."));
         driver.setIsAvailable(available);
         return DriverMapper.mapToDriverDto(userRepository.save(driver));
+    }
+
+    @Override
+    public DriverDto updateDriverLocation(String userId, DriverLocationUpdateDto locationUpdateDto) {
+        Driver driver = userRepository.findByUserId(userId)
+                .map(this::requireDriver)
+                .orElseThrow(() -> new UserNotFoundException("Driver with id " + userId + " not found."));
+
+        driver.setCurrentLocation(locationUpdateDto.getCurrentLocation());
+        driver.setCurrentLatitude(locationUpdateDto.getCurrentLatitude());
+        driver.setCurrentLongitude(locationUpdateDto.getCurrentLongitude());
+        driver.setLastActiveTime(LocalDateTime.now().toString());
+        DriverDto updatedDriver = DriverMapper.mapToDriverDto(userRepository.save(driver));
+        publishDriverLocationUpdate(userId);
+        return updatedDriver;
     }
 
     @Override
@@ -181,5 +201,13 @@ public class DriverServiceImpl implements IDriverService {
 
     private boolean hasText(String value) {
         return value != null && !value.isBlank();
+    }
+
+    private void publishDriverLocationUpdate(String userId) {
+        try {
+            shipmentsFeignClient.publishDriverLocationUpdate(userId);
+        } catch (FeignException exception) {
+            // Driver location is the source of truth; stream publication is best-effort.
+        }
     }
 }

@@ -1,6 +1,7 @@
 package com.Fastlivery_Express.user.controller;
 
 import com.Fastlivery_Express.user.dto.ApiResponse;
+import com.Fastlivery_Express.user.dto.DriverLocationUpdateDto;
 import com.Fastlivery_Express.user.dto.DriverDto;
 import com.Fastlivery_Express.user.service.IDriverService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -73,6 +74,13 @@ public class DriverController {
                                                                            @RequestParam Boolean available) {
         return ResponseEntity.ok(ApiResponse.success("Driver availability updated successfully",
                 driverService.updateDriverAvailability(id, available)));
+    }
+
+    @PutMapping("/{id}/location")
+    public ResponseEntity<ApiResponse<DriverDto>> updateDriverLocation(@Valid @PathVariable String id,
+                                                                       @Valid @RequestBody DriverLocationUpdateDto locationUpdateDto) {
+        return ResponseEntity.ok(ApiResponse.success("Driver location updated successfully",
+                driverService.updateDriverLocation(id, locationUpdateDto)));
     }
 
     @DeleteMapping("/{email}")
