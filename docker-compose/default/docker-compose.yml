@@ -1,4 +1,21 @@
 services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.5.5
+    container_name: fastlivery-keycloak
+    command: start-dev --import-realm
+    ports:
+      - "9095:8080"
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?Set KEYCLOAK_ADMIN_PASSWORD in your environment}
+      KC_HOSTNAME: http://localhost:9095
+      KC_HTTP_ENABLED: "true"
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import:ro
+    extends:
+      file: common-config.yml
+      service: network-deploy-service
+
   configserver:
     build:
       context: ../../configserver
@@ -51,16 +68,16 @@ services:
     ports:
       - "8088:8088"
     depends_on:
+      keycloak:
+        condition: service_started
       configserver:
         condition: service_healthy
       eurekaserver:
         condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "gatewayserver"
-      REDIS_HOST: host.docker.internal
-      REDIS_PORT: 6379
-      SPRING_DATA_REDIS_HOST: host.docker.internal
-      SPRING_DATA_REDIS_PORT: 6379
+      JWT_ISSUER_URI: http://localhost:9095/realms/fastlivery
+      JWT_JWK_SET_URI: http://keycloak:8080/realms/fastlivery/protocol/openid-connect/certs
     extends:
       file: common-config.yml
       service: microservice-eureka-config
@@ -68,6 +85,9 @@ services:
   rabbitmq:
     image: rabbitmq:4-management
     container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-fastlivery_app}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?Set RABBITMQ_PASSWORD for RabbitMQ}
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -86,8 +106,6 @@ services:
       context: ../../user
     image: fastlivery/user-service:local
     container_name: users-ms
-    ports:
-      - "8085:8085"
     depends_on:
       configserver:
         condition: service_healthy
@@ -95,6 +113,7 @@ services:
         condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "users"
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD for the PostgreSQL database}
     extends:
       file: common-config.yml
       service: microservice-eureka-config
@@ -104,8 +123,6 @@ services:
       context: ../../shipment
     image: fastlivery/shipment-service:local
     container_name: shipments-ms
-    ports:
-      - "8086:8086"
     depends_on:
       configserver:
         condition: service_healthy
@@ -115,8 +132,11 @@ services:
         condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "shipments"
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD for the PostgreSQL database}
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-fastlivery_app}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:?Set RABBITMQ_PASSWORD for RabbitMQ}
       SPRING_RABBITMQ_HOST: rabbitmq
       CLIENTS_USERS_URL: http://users:8085
       CLIENTS_PRICING_URL: http://pricing:8087
@@ -131,8 +151,6 @@ services:
       context: ../../pricing
     image: fastlivery/pricing-service:local
     container_name: pricing-ms
-    ports:
-      - "8087:8087"
     depends_on:
       configserver:
         condition: service_healthy
@@ -140,6 +158,8 @@ services:
         condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "pricing"
+      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD for the PostgreSQL database}
+      ORS_API_KEY: ${ORS_API_KEY:?Set ORS_API_KEY for OpenRouteService}
       REDIS_HOST: host.docker.internal
       REDIS_PORT: 6379
       SPRING_DATA_REDIS_HOST: host.docker.internal
@@ -153,8 +173,6 @@ services:
       context: ../../notification
     image: fastlivery/notification-service:local
     container_name: notifications-ms
-    ports:
-      - "8089:8089"
     depends_on:
       configserver:
         condition: service_healthy
@@ -166,6 +184,8 @@ services:
       SPRING_APPLICATION_NAME: "notifications"
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${RABBITMQ_USER:-fastlivery_app}
+      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:?Set RABBITMQ_PASSWORD for RabbitMQ}
       SPRING_RABBITMQ_HOST: rabbitmq
     extends:
       file: common-config.yml

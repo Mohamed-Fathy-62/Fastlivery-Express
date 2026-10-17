@@ -69,10 +69,10 @@ Check containers:
 docker compose -f docker-compose/default/docker-compose.yml ps
 ```
 
-Generate one gateway request and one clear log line:
+Generate one gateway request and one clear log line (replace the placeholder with a Keycloak access token):
 
 ```powershell
-curl "http://localhost:8088/api/observability/ping?message=hello-grafana"
+curl -H "Authorization: Bearer <access-token>" "http://localhost:8088/api/v1/observability/ping?message=hello-grafana"
 ```
 
 Verify Prometheus can scrape targets:

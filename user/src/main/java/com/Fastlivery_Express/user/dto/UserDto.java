@@ -14,7 +14,6 @@ import lombok.Data;
 public class UserDto {
     private String firstname;
     private String lastname;
-    private String password;
     private String userId;
 
 

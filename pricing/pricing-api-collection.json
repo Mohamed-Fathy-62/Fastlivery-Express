@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "0de7fb3f-e0f8-4a29-9d95-2dbb94c25f29",
     "name": "Fastlivery Express - Pricing Service",
-    "description": "Postman collection for pricing configuration and route quote APIs.",
+    "description": "JWT-authenticated Fastlivery requests routed through the API Gateway. Obtain an access token from Keycloak with Authorization Code + PKCE.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -286,11 +286,6 @@
   "event": [],
   "variable": [
     {
-      "key": "baseUrl",
-      "value": "http://localhost:8087",
-      "type": "string"
-    },
-    {
       "key": "pricingId",
       "value": "1",
       "type": "string"
@@ -339,6 +334,86 @@
       "key": "pricingActive",
       "value": "true",
       "type": "string"
+    },
+    {
+      "key": "keycloakBaseUrl",
+      "value": "http://localhost:9095",
+      "type": "string"
+    },
+    {
+      "key": "realm",
+      "value": "fastlivery",
+      "type": "string"
+    },
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8088",
+      "type": "string"
+    },
+    {
+      "key": "keycloakBaseUrl",
+      "value": "http://localhost:9095",
+      "type": "string"
+    },
+    {
+      "key": "realm",
+      "value": "fastlivery",
+      "type": "string"
     }
-  ]
+  ],
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "grant_type",
+        "value": "authorization_code_with_pkce",
+        "type": "string"
+      },
+      {
+        "key": "authUrl",
+        "value": "{{keycloakBaseUrl}}/realms/{{realm}}/protocol/openid-connect/auth",
+        "type": "string"
+      },
+      {
+        "key": "accessTokenUrl",
+        "value": "{{keycloakBaseUrl}}/realms/{{realm}}/protocol/openid-connect/token",
+        "type": "string"
+      },
+      {
+        "key": "clientId",
+        "value": "fastlivery-web",
+        "type": "string"
+      },
+      {
+        "key": "scope",
+        "value": "openid profile email",
+        "type": "string"
+      },
+      {
+        "key": "redirect_uri",
+        "value": "https://oauth.pstmn.io/v1/callback",
+        "type": "string"
+      },
+      {
+        "key": "code_challenge_method",
+        "value": "S256",
+        "type": "string"
+      },
+      {
+        "key": "client_authentication",
+        "value": "send client credentials in body",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      },
+      {
+        "key": "headerPrefix",
+        "value": "Bearer",
+        "type": "string"
+      }
+    ]
+  }
 }

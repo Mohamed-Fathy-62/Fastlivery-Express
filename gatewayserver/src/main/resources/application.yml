@@ -30,10 +30,13 @@ spring:
             - Path=/api/v1/pricing/**
 
 
-  data:
-    redis:
-      host: ${REDIS_HOST:localhost}
-      port: ${REDIS_PORT:6379}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${JWT_ISSUER_URI:http://localhost:9095/realms/fastlivery}
+          jwk-set-uri: ${JWT_JWK_SET_URI:http://localhost:9095/realms/fastlivery/protocol/openid-connect/certs}
+          audiences: ${JWT_AUDIENCE:fastlivery-api}
 
 eureka:
   instance:

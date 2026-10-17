@@ -5,9 +5,9 @@ spring:
   application:
     name: shipments
   datasource:
-    url: jdbc:postgresql://host.docker.internal:5432/fedb
-    username: postgres
-    password: 622000
+    url: jdbc:postgresql://${DB_HOST:host.docker.internal}:${DB_PORT:5432}/${DB_NAME:fedb}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -21,8 +21,8 @@ spring:
   rabbitmq:
     host: ${RABBITMQ_HOST:localhost}
     port: ${RABBITMQ_PORT:5672}
-    username: guest
-    password: guest
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASSWORD:guest}
 management:
   metrics:
     tags:

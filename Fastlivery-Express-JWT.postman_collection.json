@@ -1,0 +1,1559 @@
+{
+  "info": {
+    "_postman_id": "442dd16b-f47b-41d6-b0c1-0697dde2b513",
+    "name": "Fastlivery Express - JWT Gateway API",
+    "description": "Unified JWT-authenticated collection. Select the collection Authorization tab, click Get New Access Token, sign in to the fastlivery realm using Authorization Code + PKCE, then Use Token.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "oauth2",
+    "oauth2": [
+      {
+        "key": "grant_type",
+        "value": "authorization_code_with_pkce",
+        "type": "string"
+      },
+      {
+        "key": "authUrl",
+        "value": "{{keycloakBaseUrl}}/realms/{{realm}}/protocol/openid-connect/auth",
+        "type": "string"
+      },
+      {
+        "key": "accessTokenUrl",
+        "value": "{{keycloakBaseUrl}}/realms/{{realm}}/protocol/openid-connect/token",
+        "type": "string"
+      },
+      {
+        "key": "clientId",
+        "value": "fastlivery-web",
+        "type": "string"
+      },
+      {
+        "key": "scope",
+        "value": "openid profile email",
+        "type": "string"
+      },
+      {
+        "key": "redirect_uri",
+        "value": "https://oauth.pstmn.io/v1/callback",
+        "type": "string"
+      },
+      {
+        "key": "code_challenge_method",
+        "value": "S256",
+        "type": "string"
+      },
+      {
+        "key": "client_authentication",
+        "value": "send client credentials in body",
+        "type": "string"
+      },
+      {
+        "key": "addTokenTo",
+        "value": "header",
+        "type": "string"
+      },
+      {
+        "key": "headerPrefix",
+        "value": "Bearer",
+        "type": "string"
+      }
+    ]
+  },
+  "item": [
+    {
+      "name": "Gateway",
+      "item": [
+        {
+          "name": "Health (public)",
+          "request": {
+            "method": "GET",
+            "auth": {
+              "type": "noauth"
+            },
+            "url": "{{baseUrl}}/actuator/health",
+            "description": "Public health check; no token required."
+          },
+          "response": []
+        },
+        {
+          "name": "Observability Ping",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/observability/ping?message=postman-test",
+            "description": "Requires a token and emits a test log line."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User Service",
+      "item": [
+        {
+          "name": "Users",
+          "item": [
+            {
+              "name": "Search Users - Paginated and Filtered",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/users?page={{page}}&size={{size}}&sort={{userSort}}&status={{userStatus}}&role={{userRole}}&verified={{verified}}&email={{searchEmail}}&name={{searchName}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "users"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "{{page}}"
+                    },
+                    {
+                      "key": "size",
+                      "value": "{{size}}"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "{{userSort}}"
+                    },
+                    {
+                      "key": "status",
+                      "value": "{{userStatus}}"
+                    },
+                    {
+                      "key": "role",
+                      "value": "{{userRole}}"
+                    },
+                    {
+                      "key": "verified",
+                      "value": "{{verified}}"
+                    },
+                    {
+                      "key": "email",
+                      "value": "{{searchEmail}}"
+                    },
+                    {
+                      "key": "name",
+                      "value": "{{searchName}}"
+                    }
+                  ]
+                },
+                "description": "Returns a Spring Page of users with optional status, role, verified, email, and name filters."
+              },
+              "response": []
+            },
+            {
+              "name": "Create User",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstname\": \"Mohamed\",\n  \"lastname\": \"Fathy\",\n  \"email\": \"user@example.com\",\n  \"mobileNumber\": \"01012345678\",\n  \"profileImageUrl\": \"https://example.com/users/user.jpg\",\n  \"role\": \"ROLE_CUSTOMER\",\n  \"status\": \"ACTIVE\",\n  \"preferredLanguage\": \"en\",\n  \"isVerified\": false\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/users/signup",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "users",
+                    "signup"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get User by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/users/{{userId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "users",
+                    "{{userId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get User by Email",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/users/email/{{userEmail}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "users",
+                    "email",
+                    "{{userEmail}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update User",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstname\": \"Mohamed\",\n  \"lastname\": \"Fathy Updated\",\n  \"email\": \"user.updated@example.com\",\n  \"mobileNumber\": \"01012345678\",\n  \"profileImageUrl\": \"https://example.com/users/user-updated.jpg\",\n  \"role\": \"ROLE_USER\",\n  \"status\": \"ACTIVE\",\n  \"preferredLanguage\": \"en\",\n  \"isVerified\": true\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/users/{{userEmail}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "users",
+                    "{{userEmail}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete User",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/users/{{userEmail}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "users",
+                    "{{userEmail}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Customers",
+          "item": [
+            {
+              "name": "Search Customers - Paginated and Filtered",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/customers?page={{page}}&size={{size}}&sort={{customerSort}}&status={{userStatus}}&premium={{premium}}&email={{searchEmail}}&name={{searchName}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "customers"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "{{page}}"
+                    },
+                    {
+                      "key": "size",
+                      "value": "{{size}}"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "{{customerSort}}"
+                    },
+                    {
+                      "key": "status",
+                      "value": "{{userStatus}}"
+                    },
+                    {
+                      "key": "premium",
+                      "value": "{{premium}}"
+                    },
+                    {
+                      "key": "email",
+                      "value": "{{searchEmail}}"
+                    },
+                    {
+                      "key": "name",
+                      "value": "{{searchName}}"
+                    }
+                  ]
+                },
+                "description": "Returns a Spring Page of customers with optional status, premium, email, and name filters."
+              },
+              "response": []
+            },
+            {
+              "name": "Create Customer",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstname\": \"Sara\",\n  \"lastname\": \"Ali\",\n  \"email\": \"customer@example.com\",\n  \"mobileNumber\": \"01023456789\",\n  \"profileImageUrl\": \"https://example.com/customers/customer.jpg\",\n  \"role\": \"ROLE_CUSTOMER\",\n  \"status\": \"ACTIVE\",\n  \"preferredLanguage\": \"en\",\n  \"isVerified\": false,\n  \"preferredPaymentMethod\": \"CARD\",\n  \"deliveryAddress\": \"12 Nile Street, Cairo\",\n  \"loyaltyPoints\": 0,\n  \"totalOrders\": 0,\n  \"totalSpent\": 0.0,\n  \"lastOrderTime\": null,\n  \"isPremiumMember\": false\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/customers",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "customers"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Customer by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/customers/{{customerId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "customers",
+                    "{{customerId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Customer by Email",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/customers/email/{{customerEmail}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "customers",
+                    "email",
+                    "{{customerEmail}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Customer",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstname\": \"Sara\",\n  \"lastname\": \"Ali Updated\",\n  \"email\": \"customer.updated@example.com\",\n  \"mobileNumber\": \"01023456789\",\n  \"profileImageUrl\": \"https://example.com/customers/customer-updated.jpg\",\n  \"role\": \"ROLE_CUSTOMER\",\n  \"status\": \"ACTIVE\",\n  \"preferredLanguage\": \"en\",\n  \"isVerified\": true,\n  \"preferredPaymentMethod\": \"CASH\",\n  \"deliveryAddress\": \"20 Tahrir Square, Cairo\",\n  \"loyaltyPoints\": 50,\n  \"totalOrders\": 3,\n  \"totalSpent\": 450.75,\n  \"lastOrderTime\": \"2026-05-17T20:00:00\",\n  \"isPremiumMember\": true\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/customers/{{customerEmail}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "customers",
+                    "{{customerEmail}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Customer",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/customers/{{customerEmail}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "customers",
+                    "{{customerEmail}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Drivers",
+          "item": [
+            {
+              "name": "Search Drivers - Paginated and Filtered",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/drivers?page={{page}}&size={{size}}&sort={{driverSort}}&status={{userStatus}}&available={{available}}&vehicleType={{vehicleType}}&email={{searchEmail}}&name={{searchName}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "drivers"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "{{page}}"
+                    },
+                    {
+                      "key": "size",
+                      "value": "{{size}}"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "{{driverSort}}"
+                    },
+                    {
+                      "key": "status",
+                      "value": "{{userStatus}}"
+                    },
+                    {
+                      "key": "available",
+                      "value": "{{available}}"
+                    },
+                    {
+                      "key": "vehicleType",
+                      "value": "{{vehicleType}}"
+                    },
+                    {
+                      "key": "email",
+                      "value": "{{searchEmail}}"
+                    },
+                    {
+                      "key": "name",
+                      "value": "{{searchName}}"
+                    }
+                  ]
+                },
+                "description": "Returns a Spring Page of drivers with optional status, availability, vehicle type, email, and name filters."
+              },
+              "response": []
+            },
+            {
+              "name": "Create Driver",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstname\": \"Omar\",\n  \"lastname\": \"Hassan\",\n  \"email\": \"driver@example.com\",\n  \"mobileNumber\": \"01034567890\",\n  \"profileImageUrl\": \"https://example.com/drivers/driver.jpg\",\n  \"role\": \"ROLE_DRIVER\",\n  \"status\": \"ACTIVE\",\n  \"preferredLanguage\": \"en\",\n  \"isVerified\": false,\n  \"licenseNumber\": \"EG-DRV-12345\",\n  \"vehicleType\": \"MOTORCYCLE\",\n  \"vehicleNumber\": \"ABC-1234\",\n  \"isAvailable\": true,\n  \"currentLocation\": \"Cairo\",\n  \"rating\": 0.0,\n  \"totalDeliveries\": 0,\n  \"totalDistanceTraveled\": 0.0,\n  \"lastActiveTime\": null\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/drivers",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "drivers"
+                  ]
+                }
+              },
+              "response": [],
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "  const json = pm.response.json();",
+                      "  if (json.data && json.data.userId) {",
+                      "    pm.collectionVariables.set('driverId', json.data.userId);",
+                      "  }",
+                      "}"
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Get Driver by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/drivers/{{driverId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "drivers",
+                    "{{driverId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Driver by Email",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/drivers/email/{{driverEmail}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "drivers",
+                    "email",
+                    "{{driverEmail}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Driver",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"firstname\": \"Omar\",\n  \"lastname\": \"Hassan Updated\",\n  \"email\": \"driver.updated@example.com\",\n  \"mobileNumber\": \"01034567890\",\n  \"profileImageUrl\": \"https://example.com/drivers/driver-updated.jpg\",\n  \"role\": \"ROLE_DRIVER\",\n  \"status\": \"ACTIVE\",\n  \"preferredLanguage\": \"en\",\n  \"isVerified\": true,\n  \"licenseNumber\": \"EG-DRV-12345\",\n  \"vehicleType\": \"CAR\",\n  \"vehicleNumber\": \"XYZ-9876\",\n  \"isAvailable\": false,\n  \"currentLocation\": \"Giza\",\n  \"rating\": 4.7,\n  \"totalDeliveries\": 35,\n  \"totalDistanceTraveled\": 280.5,\n  \"lastActiveTime\": \"2026-05-17T20:30:00\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/drivers/{{driverEmail}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "drivers",
+                    "{{driverEmail}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Driver",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/drivers/{{driverEmail}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "drivers",
+                    "{{driverEmail}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Driver Availability",
+              "request": {
+                "method": "PUT",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/drivers/{{driverId}}/availability?available=true",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "drivers",
+                    "{{driverId}}",
+                    "availability"
+                  ],
+                  "query": [
+                    {
+                      "key": "available",
+                      "value": "true"
+                    }
+                  ]
+                },
+                "description": "Marks the driver available for shipment assignment."
+              },
+              "response": []
+            },
+            {
+              "name": "Update Driver Location",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"currentLocation\": \"Nasr City, Cairo\",\n  \"currentLatitude\": 30.0561,\n  \"currentLongitude\": 31.3300\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/drivers/{{driverId}}/location",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "drivers",
+                    "{{driverId}}",
+                    "location"
+                  ]
+                },
+                "description": "Updates the driver's current coordinates and location."
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Shipment Service",
+      "item": [
+        {
+          "name": "Order Flow",
+          "item": [
+            {
+              "name": "Request Shipment Quote and Assign Driver",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "  const json = pm.response.json();",
+                      "  if (json.data && json.data.shipment && json.data.shipment.id) {",
+                      "    pm.collectionVariables.set('shipmentId', json.data.shipment.id);",
+                      "  }",
+                      "  if (json.data && json.data.shipment && json.data.shipment.trackingNumber) {",
+                      "    pm.collectionVariables.set('trackingNumber', json.data.shipment.trackingNumber);",
+                      "  }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": \"{{customerId}}\",\n  \"originAddress\": \"Nasr City, Cairo\",\n  \"destinationAddress\": \"Maadi, Cairo\",\n  \"originLatitude\": {{originLatitude}},\n  \"originLongitude\": {{originLongitude}},\n  \"destinationLatitude\": {{destinationLatitude}},\n  \"destinationLongitude\": {{destinationLongitude}},\n  \"totalWeight\": 2.5,\n  \"packageDetails\": \"Small fragile package\",\n  \"packageDimensions\": \"30x20x15 cm\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/shipments/request",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "shipments",
+                    "request"
+                  ]
+                },
+                "description": "Calculates price through pricing service, finds nearest available driver through user service, and creates a PENDING_CONFIRMATION shipment."
+              },
+              "response": []
+            },
+            {
+              "name": "Confirm Shipment",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/shipments/{{shipmentId}}/confirm",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "shipments",
+                    "{{shipmentId}}",
+                    "confirm"
+                  ]
+                },
+                "description": "Confirms a PENDING_CONFIRMATION shipment and marks the assigned driver unavailable."
+              },
+              "response": []
+            },
+            {
+              "name": "Create Stripe Checkout Session",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "  const json = pm.response.json();",
+                      "  if (json.data && json.data.checkoutSessionId) {",
+                      "    pm.collectionVariables.set('stripeCheckoutSessionId', json.data.checkoutSessionId);",
+                      "  }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/shipments/{{shipmentId}}/payment/checkout",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "shipments",
+                    "{{shipmentId}}",
+                    "payment",
+                    "checkout"
+                  ]
+                },
+                "description": "Creates a Stripe Checkout Session and returns the hosted checkout URL."
+              },
+              "response": []
+            },
+            {
+              "name": "Sync Stripe Checkout Session",
+              "request": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/shipments/payment/sync?session_id={{stripeCheckoutSessionId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "shipments",
+                    "payment",
+                    "sync"
+                  ],
+                  "query": [
+                    {
+                      "key": "session_id",
+                      "value": "{{stripeCheckoutSessionId}}"
+                    }
+                  ]
+                },
+                "description": "Retrieves a Stripe Checkout Session and updates shipment paymentStatus."
+              },
+              "response": []
+            },
+            {
+              "name": "Track Shipment by Tracking Number",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/shipments/track/{{trackingNumber}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "shipments",
+                    "track",
+                    "{{trackingNumber}}"
+                  ]
+                },
+                "description": "Returns shipment status, ETA, last known location, and assigned driver's latest location."
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Shipments CRUD",
+          "item": [
+            {
+              "name": "Search Shipments - Paginated and Filtered",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/shipments?page={{page}}&size={{size}}&sort={{shipmentSort}}&customerId={{customerId}}&driverId={{driverId}}&status={{shipmentStatus}}&paymentStatus={{paymentStatus}}&trackingNumber={{trackingNumber}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "shipments"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "{{page}}"
+                    },
+                    {
+                      "key": "size",
+                      "value": "{{size}}"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "{{shipmentSort}}"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "{{customerId}}"
+                    },
+                    {
+                      "key": "driverId",
+                      "value": "{{driverId}}"
+                    },
+                    {
+                      "key": "status",
+                      "value": "{{shipmentStatus}}"
+                    },
+                    {
+                      "key": "paymentStatus",
+                      "value": "{{paymentStatus}}"
+                    },
+                    {
+                      "key": "trackingNumber",
+                      "value": "{{trackingNumber}}"
+                    }
+                  ]
+                },
+                "description": "Returns a Spring Page of shipments with optional customer, driver, status, payment status, and tracking number filters."
+              },
+              "response": []
+            },
+            {
+              "name": "Create Shipment Directly",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "  const json = pm.response.json();",
+                      "  if (json.data && json.data.id) {",
+                      "    pm.collectionVariables.set('shipmentId', json.data.id);",
+                      "  }",
+                      "  if (json.data && json.data.trackingNumber) {",
+                      "    pm.collectionVariables.set('trackingNumber', json.data.trackingNumber);",
+                      "  }",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"trackingNumber\": \"{{trackingNumber}}\",\n  \"customerId\": \"{{customerId}}\",\n  \"driverId\": \"{{driverId}}\",\n  \"originAddress\": \"Nasr City, Cairo\",\n  \"destinationAddress\": \"Maadi, Cairo\",\n  \"originLatitude\": {{originLatitude}},\n  \"originLongitude\": {{originLongitude}},\n  \"destinationLatitude\": {{destinationLatitude}},\n  \"destinationLongitude\": {{destinationLongitude}},\n  \"status\": \"PENDING_CONFIRMATION\",\n  \"totalPrice\": 120.50,\n  \"estimatedDeliveryTime\": \"2026-05-17T22:30:00\",\n  \"actualDeliveryTime\": null,\n  \"packageDetails\": \"Small fragile package\",\n  \"paymentStatus\": \"PENDING\",\n  \"customerFeedback\": null,\n  \"customerRating\": null,\n  \"driverFeedback\": null,\n  \"driverRating\": null,\n  \"cancellationReason\": null,\n  \"lastKnownLocation\": \"Nasr City, Cairo\",\n  \"totalWeight\": 2.5,\n  \"packageDimensions\": \"30x20x15 cm\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/shipments",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "shipments"
+                  ]
+                },
+                "description": "Creates a shipment directly without calling pricing or nearest-driver assignment."
+              },
+              "response": []
+            },
+            {
+              "name": "Get Shipment by ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/shipments/{{shipmentId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "shipments",
+                    "{{shipmentId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Shipments by Customer ID",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/shipments/all?customer_id={{customerId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "shipments",
+                    "all"
+                  ],
+                  "query": [
+                    {
+                      "key": "customer_id",
+                      "value": "{{customerId}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Shipment",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"trackingNumber\": \"{{trackingNumber}}\",\n  \"customerId\": \"{{customerId}}\",\n  \"driverId\": \"{{driverId}}\",\n  \"originAddress\": \"Nasr City, Cairo\",\n  \"destinationAddress\": \"Maadi, Cairo\",\n  \"originLatitude\": {{originLatitude}},\n  \"originLongitude\": {{originLongitude}},\n  \"destinationLatitude\": {{destinationLatitude}},\n  \"destinationLongitude\": {{destinationLongitude}},\n  \"status\": \"IN_TRANSIT\",\n  \"totalPrice\": 120.50,\n  \"estimatedDeliveryTime\": \"2026-05-17T22:30:00\",\n  \"actualDeliveryTime\": null,\n  \"packageDetails\": \"Small fragile package\",\n  \"paymentStatus\": \"PAID\",\n  \"customerFeedback\": null,\n  \"customerRating\": null,\n  \"driverFeedback\": null,\n  \"driverRating\": null,\n  \"cancellationReason\": null,\n  \"lastKnownLocation\": \"Salah Salem Road, Cairo\",\n  \"totalWeight\": 2.5,\n  \"packageDimensions\": \"30x20x15 cm\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/shipments/{{shipmentId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "shipments",
+                    "{{shipmentId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Shipment",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/shipments/{{shipmentId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "shipments",
+                    "{{shipmentId}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Service Info",
+          "item": [
+            {
+              "name": "Get Contact Info",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/shipments/contact-info",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "shipments",
+                    "contact-info"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pricing Service",
+      "item": [
+        {
+          "name": "Quotes",
+          "item": [
+            {
+              "name": "Calculate Total Price",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"coordinates\": [\n    [{{originLongitude}}, {{originLatitude}}],\n    [{{destinationLongitude}}, {{destinationLatitude}}]\n  ]\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/pricing/calculate?weight={{weight}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "pricing",
+                    "calculate"
+                  ],
+                  "query": [
+                    {
+                      "key": "weight",
+                      "value": "{{weight}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Calculate Detailed Quote",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"coordinates\": [\n    [{{originLongitude}}, {{originLatitude}}],\n    [{{destinationLongitude}}, {{destinationLatitude}}]\n  ]\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/pricing/quote?weight={{weight}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "pricing",
+                    "quote"
+                  ],
+                  "query": [
+                    {
+                      "key": "weight",
+                      "value": "{{weight}}"
+                    }
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        },
+        {
+          "name": "Pricing Configs",
+          "item": [
+            {
+              "name": "Search Pricing Configs - Paginated and Filtered",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/pricing/configs?page={{page}}&size={{size}}&sort={{pricingSort}}&active={{pricingActive}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "pricing",
+                    "configs"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "{{page}}"
+                    },
+                    {
+                      "key": "size",
+                      "value": "{{size}}"
+                    },
+                    {
+                      "key": "sort",
+                      "value": "{{pricingSort}}"
+                    },
+                    {
+                      "key": "active",
+                      "value": "{{pricingActive}}"
+                    }
+                  ]
+                },
+                "description": "Returns a Spring Page of pricing configurations with optional active filter."
+              },
+              "response": []
+            },
+            {
+              "name": "Create Pricing Config",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "if (pm.response.code === 201) {",
+                      "  const json = pm.response.json();",
+                      "  if (json.data && json.data.id) pm.collectionVariables.set('pricingId', json.data.id);",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"baseFare\": 25.0,\n  \"ratePerKm\": 6.0,\n  \"ratePerKg\": 4.0,\n  \"isActive\": true\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/pricing/configs",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "pricing",
+                    "configs"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get All Pricing Configs",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/pricing/configs",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "pricing",
+                    "configs"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Get Active Pricing Config",
+              "request": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/pricing/configs/active",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "pricing",
+                    "configs",
+                    "active"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Update Pricing Config",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"baseFare\": 30.0,\n  \"ratePerKm\": 7.5,\n  \"ratePerKg\": 5.0,\n  \"isActive\": true\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/pricing/configs/{{pricingId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "pricing",
+                    "configs",
+                    "{{pricingId}}"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Activate Pricing Config",
+              "request": {
+                "method": "PATCH",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/pricing/configs/{{pricingId}}/activate",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "pricing",
+                    "configs",
+                    "{{pricingId}}",
+                    "activate"
+                  ]
+                }
+              },
+              "response": []
+            },
+            {
+              "name": "Delete Pricing Config",
+              "request": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/pricing/configs/{{pricingId}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "pricing",
+                    "configs",
+                    "{{pricingId}}"
+                  ]
+                }
+              },
+              "response": []
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "userId",
+      "value": "11111111-1111-1111-1111-111111111111",
+      "type": "string"
+    },
+    {
+      "key": "userEmail",
+      "value": "user@example.com",
+      "type": "string"
+    },
+    {
+      "key": "customerId",
+      "value": "22222222-2222-2222-2222-222222222222",
+      "type": "string"
+    },
+    {
+      "key": "customerEmail",
+      "value": "customer@example.com",
+      "type": "string"
+    },
+    {
+      "key": "driverId",
+      "value": "33333333-3333-3333-3333-333333333333",
+      "type": "string"
+    },
+    {
+      "key": "driverEmail",
+      "value": "driver@example.com",
+      "type": "string"
+    },
+    {
+      "key": "page",
+      "value": "0",
+      "type": "string"
+    },
+    {
+      "key": "size",
+      "value": "20",
+      "type": "string"
+    },
+    {
+      "key": "userSort",
+      "value": "firstname,asc",
+      "type": "string"
+    },
+    {
+      "key": "customerSort",
+      "value": "firstname,asc",
+      "type": "string"
+    },
+    {
+      "key": "driverSort",
+      "value": "rating,desc",
+      "type": "string"
+    },
+    {
+      "key": "userStatus",
+      "value": "ACTIVE",
+      "type": "string"
+    },
+    {
+      "key": "userRole",
+      "value": "ROLE_USER",
+      "type": "string"
+    },
+    {
+      "key": "verified",
+      "value": "true",
+      "type": "string"
+    },
+    {
+      "key": "premium",
+      "value": "false",
+      "type": "string"
+    },
+    {
+      "key": "available",
+      "value": "true",
+      "type": "string"
+    },
+    {
+      "key": "vehicleType",
+      "value": "CAR",
+      "type": "string"
+    },
+    {
+      "key": "searchEmail",
+      "value": "example.com",
+      "type": "string"
+    },
+    {
+      "key": "searchName",
+      "value": "Mohamed",
+      "type": "string"
+    },
+    {
+      "key": "keycloakBaseUrl",
+      "value": "http://localhost:9095",
+      "type": "string"
+    },
+    {
+      "key": "realm",
+      "value": "fastlivery",
+      "type": "string"
+    },
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8088",
+      "type": "string"
+    },
+    {
+      "key": "shipmentId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "trackingNumber",
+      "value": "FLX-POSTMAN01",
+      "type": "string"
+    },
+    {
+      "key": "stripeCheckoutSessionId",
+      "value": "cs_test_example",
+      "type": "string"
+    },
+    {
+      "key": "originLatitude",
+      "value": "30.0561",
+      "type": "string"
+    },
+    {
+      "key": "originLongitude",
+      "value": "31.3300",
+      "type": "string"
+    },
+    {
+      "key": "destinationLatitude",
+      "value": "29.9602",
+      "type": "string"
+    },
+    {
+      "key": "destinationLongitude",
+      "value": "31.2569",
+      "type": "string"
+    },
+    {
+      "key": "shipmentSort",
+      "value": "id,desc",
+      "type": "string"
+    },
+    {
+      "key": "shipmentStatus",
+      "value": "PENDING_CONFIRMATION",
+      "type": "string"
+    },
+    {
+      "key": "paymentStatus",
+      "value": "PENDING",
+      "type": "string"
+    },
+    {
+      "key": "pricingId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "weight",
+      "value": "2.5",
+      "type": "string"
+    },
+    {
+      "key": "pricingSort",
+      "value": "id,desc",
+      "type": "string"
+    },
+    {
+      "key": "pricingActive",
+      "value": "true",
+      "type": "string"
+    }
+  ]
+}

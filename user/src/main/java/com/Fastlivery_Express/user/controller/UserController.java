@@ -27,7 +27,7 @@ public class UserController {
 
     private IUserService userService;
 
-    //sign up new user in keycloak and create a new user profile in postgres
+    // Creates the application profile; Keycloak owns credentials and token issuance.
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<UserDto>> createUser(@Valid @RequestBody UserDto userDto) {
         UserDto created = userService.createUser(userDto);
