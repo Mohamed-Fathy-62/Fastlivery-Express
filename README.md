@@ -49,6 +49,8 @@ After a customer requests a quote, completes payment, and confirms the shipment,
 
 Each action requires the assigned driver's JWT. The shipment moves through `CONFIRMED`, `DRIVER_ACCEPTED`, `PICKED_UP`, `IN_TRANSIT`, and `DELIVERED`. Delivery records the actual delivery time and makes the driver available again. Invalid state transitions and actions by another driver return HTTP 409. The Postman collection includes **Create Driver**, **Login as Driver**, and each lifecycle action; switch back to a customer login before making customer requests.
 
+Before pickup, the requesting customer can cancel with `POST /api/v1/shipments/{id}/cancel`. Cancellation is available in `PENDING_CONFIRMATION`, `CONFIRMED`, or `DRIVER_ACCEPTED`; it changes status to `CANCELLED` and releases the assigned driver. The requester's JWT identity must match the shipment customer. Cancellation after pickup is rejected. Payment refunds are not handled by this basic cancellation flow.
+
 ## Postman
 
 Import [Fastlivery-Express-JWT.postman_collection.json](Fastlivery-Express-JWT.postman_collection.json). Run **Authentication → Register Customer** once, or **Authentication → Login** for an existing account. The collection scripts save the returned token and customer profile ID; subsequent requests use the token automatically. Use unique email and mobile values when registering again. To exercise driver actions, first log in as admin, run **Create Driver**, and then run **Login as Driver**. That replaces the collection token with the driver token.

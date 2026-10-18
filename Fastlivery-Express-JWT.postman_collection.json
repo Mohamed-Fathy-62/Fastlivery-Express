@@ -1236,6 +1236,28 @@
                 "description": "Driver action for the assigned shipment. Run with the DRIVER access token, in order after customer payment and confirmation."
               },
               "name": "Mark Delivered"
+            },
+            {
+              "name": "Cancel Shipment",
+              "request": {
+                "url": {
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "shipments",
+                    "{{shipmentId}}",
+                    "cancel"
+                  ],
+                  "raw": "{{baseUrl}}/api/v1/shipments/{{shipmentId}}/cancel"
+                },
+                "header": [],
+                "description": "Customer action. Cancels a shipment before pickup and releases its assigned driver. Requires the requesting customer JWT.",
+                "method": "POST"
+              },
+              "response": []
             }
           ]
         },

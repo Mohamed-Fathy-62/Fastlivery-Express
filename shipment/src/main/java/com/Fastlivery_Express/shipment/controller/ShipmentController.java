@@ -63,6 +63,12 @@ public class ShipmentController {
         return ResponseEntity.ok(ApiResponse.success("Shipment confirmed successfully", iShipmentService.confirmShipment(id)));
     }
 
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<ApiResponse<ShipmentDto>> cancelShipment(@PathVariable Long id,
+            @RequestHeader("X-Authenticated-User-Id") String customerId) {
+        return ResponseEntity.ok(ApiResponse.success("Shipment cancelled successfully", iShipmentService.cancelShipment(id, customerId)));
+    }
+
     @PostMapping("/{id}/accept")
     public ResponseEntity<ApiResponse<ShipmentDto>> acceptShipment(@PathVariable Long id,
             @RequestHeader("X-Authenticated-User-Id") String driverId) {

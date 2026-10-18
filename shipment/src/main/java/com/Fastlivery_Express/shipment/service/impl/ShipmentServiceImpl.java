@@ -42,6 +42,7 @@ public class ShipmentServiceImpl implements IShipmentService {
     private static final String STATUS_PICKED_UP = "PICKED_UP";
     private static final String STATUS_IN_TRANSIT = "IN_TRANSIT";
     private static final String STATUS_DELIVERED = "DELIVERED";
+    private static final String STATUS_CANCELLED = "CANCELLED";
     private static final String PAYMENT_PAID = "PAID";
     private static final String EVENT_SHIPMENT_CREATED = "SHIPMENT_CREATED";
     private static final String EVENT_SHIPMENT_REQUESTED = "SHIPMENT_REQUESTED";
@@ -215,6 +216,28 @@ public class ShipmentServiceImpl implements IShipmentService {
         Shipment saved = shipmentRepository.save(shipment);
         shipmentEventPublisher.publish("SHIPMENT_DELIVERED", saved);
         usersFeignClient.updateDriverAvailability(driverId, true);
+        return ShipmentMapper.mapToShipmentDto(saved);
+    }
+
+    @Override
+    public ShipmentDto cancelShipment(Long id, String customerId) {
+        Shipment shipment = shipmentRepository.findById(id)
+                .orElseThrow(() -> new ShipmentNotFoundException("Shipment with id " + id + " not found."));
+        if (!customerId.equals(shipment.getCustomerId())) {
+            throw new IllegalStateException("Only the customer who requested this shipment can cancel it.");
+        }
+        String status = shipment.getStatus();
+        if (!STATUS_PENDING_CONFIRMATION.equalsIgnoreCase(status)
+                && !STATUS_CONFIRMED.equalsIgnoreCase(status)
+                && !STATUS_DRIVER_ACCEPTED.equalsIgnoreCase(status)) {
+            throw new IllegalStateException("A shipment can only be cancelled before pickup.");
+        }
+
+        shipment.setStatus(STATUS_CANCELLED);
+        shipment.setCancellationReason("Cancelled by customer.");
+        Shipment saved = shipmentRepository.save(shipment);
+        shipmentEventPublisher.publish("SHIPMENT_CANCELLED", saved);
+        usersFeignClient.updateDriverAvailability(shipment.getDriverId(), true);
         return ShipmentMapper.mapToShipmentDto(saved);
     }
 

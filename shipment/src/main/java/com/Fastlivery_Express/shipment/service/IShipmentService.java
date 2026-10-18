@@ -24,5 +24,6 @@ public interface IShipmentService {
     ShipmentDto pickupShipment(Long id, String driverId);
     ShipmentDto markShipmentInTransit(Long id, String driverId);
     ShipmentDto deliverShipment(Long id, String driverId);
+    ShipmentDto cancelShipment(Long id, String customerId);
     ShipmentTrackingDto trackShipment(String trackingNumber);
 }
