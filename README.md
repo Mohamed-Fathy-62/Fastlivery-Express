@@ -14,6 +14,12 @@ docker compose -f docker-compose/default/docker-compose.yml up -d --build
 
 The API gateway is at `http://localhost:8088`. JWT authentication is handled by the user service; there is no Keycloak service. The local HS256 signing secret is configured in the user service, gateway settings, and default Compose file. It is a development value; change it before deploying anywhere shared.
 
+Prometheus, Loki, Promtail, and Grafana are optional. The normal Compose command above does not start or pull their images. To run them when needed, add `--profile observability` to the `up` command; for example:
+
+```powershell
+docker compose -f docker-compose/default/docker-compose.yml --profile observability up -d
+```
+
 ## Register and use a JWT
 
 Register a customer with `POST http://localhost:8088/api/v1/auth/register`:

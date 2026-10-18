@@ -180,6 +180,7 @@ services:
       service: microservice-eureka-config
 
   prometheus:
+    profiles: ["observability"]
     image: prom/prometheus:v3.0.1
     container_name: prometheus
     ports:
@@ -196,6 +197,7 @@ services:
       service: network-deploy-service
 
   loki:
+    profiles: ["observability"]
     image: grafana/loki:3.3.2
     container_name: loki
     ports:
@@ -209,6 +211,7 @@ services:
       service: network-deploy-service
 
   promtail:
+    profiles: ["observability"]
     image: grafana/promtail:3.3.2
     container_name: promtail
     command: "-config.file=/etc/promtail/promtail.yml"
@@ -222,6 +225,7 @@ services:
       service: network-deploy-service
 
   grafana:
+    profiles: ["observability"]
     image: grafana/grafana:11.4.0
     container_name: grafana
     ports:
