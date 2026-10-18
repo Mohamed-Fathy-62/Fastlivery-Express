@@ -79,8 +79,8 @@ public class AuthService {
         String email = request.getEmail().trim().toLowerCase(Locale.ROOT);
         User account = userRepository.findByEmail(email)
                 .filter(user -> user instanceof Customer || user instanceof Driver)
-                .filter(account -> account.getPasswordHash() != null
-                        && passwordEncoder.matches(request.getPassword(), account.getPasswordHash()))
+                .filter(candidate -> candidate.getPasswordHash() != null
+                        && passwordEncoder.matches(request.getPassword(), candidate.getPasswordHash()))
                 .orElseThrow(InvalidCredentialsException::new);
         return createAuthResponse(account);
     }
