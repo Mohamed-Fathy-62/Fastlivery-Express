@@ -66,6 +66,8 @@ public class SecurityConfig {
                         .pathMatchers(HttpMethod.DELETE, "/api/v1/users/**", "/api/v1/customers/**", "/api/v1/drivers/**").hasRole("ADMIN")
                         .pathMatchers(HttpMethod.POST, "/api/v1/shipments/request").hasRole("CUSTOMER")
                         .pathMatchers(HttpMethod.GET, "/api/v1/shipments/all").hasRole("CUSTOMER")
+                        .pathMatchers(HttpMethod.POST, "/api/v1/shipments/*/accept", "/api/v1/shipments/*/pickup",
+                                "/api/v1/shipments/*/in-transit", "/api/v1/shipments/*/deliver").hasRole("DRIVER")
                         .pathMatchers(HttpMethod.GET, "/api/v1/shipments").hasRole("ADMIN")
                         .pathMatchers(HttpMethod.POST, "/api/v1/shipments").hasRole("ADMIN")
                         .pathMatchers(HttpMethod.PUT, "/api/v1/shipments/**").hasRole("ADMIN")

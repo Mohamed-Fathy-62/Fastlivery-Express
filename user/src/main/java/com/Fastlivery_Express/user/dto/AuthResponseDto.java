@@ -10,4 +10,5 @@ public class AuthResponseDto {
     private String tokenType;
     private long expiresInSeconds;
     private CustomerDto customer;
+    private DriverDto driver;
 }

@@ -18,6 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,14 +30,19 @@ import java.util.List;
 public class DriverServiceImpl implements IDriverService {
 
     private UserRepository userRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public DriverDto createDriver(DriverDto driverDto) {
         validateNewUser(driverDto.getEmail(), driverDto.getMobileNumber());
-        if (driverDto.getRole() == null) {
-            driverDto.setRole("ROLE_DRIVER");
+        if (driverDto.getPassword() == null || driverDto.getPassword().isBlank()) {
+            throw new IllegalArgumentException("A password is required when creating a driver account.");
         }
-        Driver savedDriver = userRepository.save(DriverMapper.mapToDriver(driverDto));
+        driverDto.setRole("ROLE_DRIVER");
+        Driver driver = DriverMapper.mapToDriver(driverDto);
+        driver.setPasswordHash(passwordEncoder.encode(driverDto.getPassword()));
+        driver.setStatus("ACTIVE");
+        Driver savedDriver = userRepository.save(driver);
         return DriverMapper.mapToDriverDto(savedDriver);
     }
 

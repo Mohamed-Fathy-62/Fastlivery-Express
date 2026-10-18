@@ -38,6 +38,10 @@ public class ShipmentServiceImpl implements IShipmentService {
     private static final String STATUS_PENDING_CONFIRMATION = "PENDING_CONFIRMATION";
     private static final String STATUS_CONFIRMED = "CONFIRMED";
     private static final String STATUS_EXPIRED = "EXPIRED";
+    private static final String STATUS_DRIVER_ACCEPTED = "DRIVER_ACCEPTED";
+    private static final String STATUS_PICKED_UP = "PICKED_UP";
+    private static final String STATUS_IN_TRANSIT = "IN_TRANSIT";
+    private static final String STATUS_DELIVERED = "DELIVERED";
     private static final String PAYMENT_PAID = "PAID";
     private static final String EVENT_SHIPMENT_CREATED = "SHIPMENT_CREATED";
     private static final String EVENT_SHIPMENT_REQUESTED = "SHIPMENT_REQUESTED";
@@ -186,6 +190,52 @@ public class ShipmentServiceImpl implements IShipmentService {
         Shipment savedShipment = shipmentRepository.save(shipment);
         shipmentEventPublisher.publish(EVENT_SHIPMENT_CONFIRMED, savedShipment);
         return ShipmentMapper.mapToShipmentDto(savedShipment);
+    }
+
+    @Override
+    public ShipmentDto acceptShipment(Long id, String driverId) {
+        return advanceShipment(id, driverId, STATUS_CONFIRMED, STATUS_DRIVER_ACCEPTED, "SHIPMENT_DRIVER_ACCEPTED");
+    }
+
+    @Override
+    public ShipmentDto pickupShipment(Long id, String driverId) {
+        return advanceShipment(id, driverId, STATUS_DRIVER_ACCEPTED, STATUS_PICKED_UP, "SHIPMENT_PICKED_UP");
+    }
+
+    @Override
+    public ShipmentDto markShipmentInTransit(Long id, String driverId) {
+        return advanceShipment(id, driverId, STATUS_PICKED_UP, STATUS_IN_TRANSIT, "SHIPMENT_IN_TRANSIT");
+    }
+
+    @Override
+    public ShipmentDto deliverShipment(Long id, String driverId) {
+        Shipment shipment = requireAssignedShipment(id, driverId, STATUS_IN_TRANSIT);
+        shipment.setStatus(STATUS_DELIVERED);
+        shipment.setActualDeliveryTime(LocalDateTime.now());
+        Shipment saved = shipmentRepository.save(shipment);
+        shipmentEventPublisher.publish("SHIPMENT_DELIVERED", saved);
+        usersFeignClient.updateDriverAvailability(driverId, true);
+        return ShipmentMapper.mapToShipmentDto(saved);
+    }
+
+    private ShipmentDto advanceShipment(Long id, String driverId, String expectedStatus, String nextStatus, String eventType) {
+        Shipment shipment = requireAssignedShipment(id, driverId, expectedStatus);
+        shipment.setStatus(nextStatus);
+        Shipment saved = shipmentRepository.save(shipment);
+        shipmentEventPublisher.publish(eventType, saved);
+        return ShipmentMapper.mapToShipmentDto(saved);
+    }
+
+    private Shipment requireAssignedShipment(Long id, String driverId, String expectedStatus) {
+        Shipment shipment = shipmentRepository.findById(id)
+                .orElseThrow(() -> new ShipmentNotFoundException("Shipment with id " + id + " not found."));
+        if (!driverId.equals(shipment.getDriverId())) {
+            throw new IllegalStateException("Only the assigned driver can update this shipment.");
+        }
+        if (!expectedStatus.equalsIgnoreCase(shipment.getStatus())) {
+            throw new IllegalStateException("Shipment with id " + id + " must be " + expectedStatus + " before this action.");
+        }
+        return shipment;
     }
 
     @Override

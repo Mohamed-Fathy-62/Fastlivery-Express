@@ -4,9 +4,12 @@ import com.Fastlivery_Express.user.dto.AuthResponseDto;
 import com.Fastlivery_Express.user.dto.CustomerRegistrationDto;
 import com.Fastlivery_Express.user.dto.LoginRequestDto;
 import com.Fastlivery_Express.user.entity.Customer;
+import com.Fastlivery_Express.user.entity.Driver;
+import com.Fastlivery_Express.user.entity.User;
 import com.Fastlivery_Express.user.exception.InvalidCredentialsException;
 import com.Fastlivery_Express.user.exception.UserAlreadyExistsException;
 import com.Fastlivery_Express.user.mapper.CustomerMapper;
+import com.Fastlivery_Express.user.mapper.DriverMapper;
 import com.Fastlivery_Express.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -74,34 +77,34 @@ public class AuthService {
 
     public AuthResponseDto login(LoginRequestDto request) {
         String email = request.getEmail().trim().toLowerCase(Locale.ROOT);
-        Customer customer = userRepository.findByEmail(email)
-                .filter(Customer.class::isInstance)
-                .map(Customer.class::cast)
+        User account = userRepository.findByEmail(email)
+                .filter(user -> user instanceof Customer || user instanceof Driver)
                 .filter(account -> account.getPasswordHash() != null
                         && passwordEncoder.matches(request.getPassword(), account.getPasswordHash()))
                 .orElseThrow(InvalidCredentialsException::new);
-        return createAuthResponse(customer);
+        return createAuthResponse(account);
     }
 
-    private AuthResponseDto createAuthResponse(Customer customer) {
+    private AuthResponseDto createAuthResponse(User account) {
         Instant now = Instant.now();
         Instant expiresAt = now.plus(tokenTtlMinutes, ChronoUnit.MINUTES);
-        String role = customer.getRole() == null ? "ROLE_CUSTOMER" : customer.getRole();
+        String role = account.getRole() == null ? (account instanceof Driver ? "ROLE_DRIVER" : "ROLE_CUSTOMER") : account.getRole();
         String roleClaim = role.startsWith("ROLE_") ? role.substring("ROLE_".length()) : role;
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .issuer(issuer)
-                .subject(customer.getUserId())
+                .subject(account.getUserId())
                 .audience(List.of(audience))
                 .issuedAt(now)
                 .expiresAt(expiresAt)
-                .claim("email", customer.getEmail())
+                .claim("email", account.getEmail())
                 .claim("realm_access", Map.of("roles", List.of(roleClaim)))
                 .build();
         String token = jwtEncoder.encode(JwtEncoderParameters.from(
                 JwsHeader.with(MacAlgorithm.HS256).build(), claims)).getTokenValue();
 
         return new AuthResponseDto(token, "Bearer", tokenTtlMinutes * 60,
-                CustomerMapper.mapToCustomerDto(customer));
+                account instanceof Customer customer ? CustomerMapper.mapToCustomerDto(customer) : null,
+                account instanceof Driver driver ? DriverMapper.mapToDriverDto(driver) : null);
     }
 }

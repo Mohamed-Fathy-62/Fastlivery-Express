@@ -117,13 +117,67 @@
                   "if (pm.response.code === 200) {",
                   "  const body = pm.response.json();",
                   "  if (body.data && body.data.accessToken) pm.collectionVariables.set(\"accessToken\", body.data.accessToken);",
-                  "  if (body.data && body.data.customer && body.data.customer.userId) pm.collectionVariables.set(\"customerId\", body.data.customer.userId);",
+                  "  if (body.data && body.data.driver && body.data.driver.userId) pm.collectionVariables.set(\"driverId\", body.data.driver.userId);",
                   "}"
                 ]
               }
             }
           ],
           "response": []
+        },
+        {
+          "name": "Login as Driver",
+          "request": {
+            "method": "POST",
+            "auth": {
+              "type": "noauth"
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{driverEmail}}\",\n  \"password\": \"{{driverPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/auth/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Returns a JWT for the registered account and saves it as the collection accessToken."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const body = pm.response.json();",
+                  "  if (body.data && body.data.accessToken) pm.collectionVariables.set(\"accessToken\", body.data.accessToken);",
+                  "  if (body.data && body.data.driver && body.data.driver.userId) pm.collectionVariables.set(\"driverId\", body.data.driver.userId);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "response": [],
+          "description": "Logs in as the provisioned driver. Run Create Driver first; this replaces accessToken with a DRIVER token."
         }
       ]
     },
@@ -547,7 +601,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"firstname\": \"Omar\",\n  \"lastname\": \"Hassan\",\n  \"email\": \"driver@example.com\",\n  \"mobileNumber\": \"01034567890\",\n  \"profileImageUrl\": \"https://example.com/drivers/driver.jpg\",\n  \"role\": \"ROLE_DRIVER\",\n  \"status\": \"ACTIVE\",\n  \"preferredLanguage\": \"en\",\n  \"isVerified\": false,\n  \"licenseNumber\": \"EG-DRV-12345\",\n  \"vehicleType\": \"MOTORCYCLE\",\n  \"vehicleNumber\": \"ABC-1234\",\n  \"isAvailable\": true,\n  \"currentLocation\": \"Cairo\",\n  \"rating\": 0.0,\n  \"totalDeliveries\": 0,\n  \"totalDistanceTraveled\": 0.0,\n  \"lastActiveTime\": null\n}"
+                  "raw": "{\n  \"firstname\": \"Omar\",\n  \"lastname\": \"Hassan\",\n  \"email\": \"{{driverEmail}}\",\n  \"mobileNumber\": \"01034567890\",\n  \"password\": \"{{driverPassword}}\",\n  \"profileImageUrl\": \"https://example.com/drivers/driver.jpg\",\n  \"role\": \"ROLE_DRIVER\",\n  \"status\": \"ACTIVE\",\n  \"preferredLanguage\": \"en\",\n  \"isVerified\": false,\n  \"licenseNumber\": \"EG-DRV-12345\",\n  \"vehicleType\": \"MOTORCYCLE\",\n  \"vehicleNumber\": \"ABC-1234\",\n  \"isAvailable\": true,\n  \"currentLocation\": \"Cairo\",\n  \"currentLatitude\": {{originLatitude}},\n  \"currentLongitude\": {{originLongitude}},\n  \"rating\": 0.0,\n  \"totalDeliveries\": 0,\n  \"totalDistanceTraveled\": 0.0,\n  \"lastActiveTime\": null\n}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/drivers",
@@ -1094,6 +1148,94 @@
                 }
               },
               "response": []
+            },
+            {
+              "response": [],
+              "request": {
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/shipments/{{shipmentId}}/accept",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "shipments",
+                    "{{shipmentId}}",
+                    "accept"
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "description": "Driver action for the assigned shipment. Run with the DRIVER access token, in order after customer payment and confirmation."
+              },
+              "name": "Accept Shipment"
+            },
+            {
+              "response": [],
+              "request": {
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/shipments/{{shipmentId}}/pickup",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "shipments",
+                    "{{shipmentId}}",
+                    "pickup"
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "description": "Driver action for the assigned shipment. Run with the DRIVER access token, in order after customer payment and confirmation."
+              },
+              "name": "Mark Picked Up"
+            },
+            {
+              "response": [],
+              "request": {
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/shipments/{{shipmentId}}/in-transit",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "shipments",
+                    "{{shipmentId}}",
+                    "in-transit"
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "description": "Driver action for the assigned shipment. Run with the DRIVER access token, in order after customer payment and confirmation."
+              },
+              "name": "Mark In Transit"
+            },
+            {
+              "response": [],
+              "request": {
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/shipments/{{shipmentId}}/deliver",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "api",
+                    "v1",
+                    "shipments",
+                    "{{shipmentId}}",
+                    "deliver"
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "description": "Driver action for the assigned shipment. Run with the DRIVER access token, in order after customer payment and confirmation."
+              },
+              "name": "Mark Delivered"
             }
           ]
         },
@@ -1581,6 +1723,11 @@
       "key": "accessToken",
       "value": "",
       "type": "string"
+    },
+    {
+      "key": "driverPassword",
+      "type": "string",
+      "value": "DriverPassword123!"
     }
   ]
 }

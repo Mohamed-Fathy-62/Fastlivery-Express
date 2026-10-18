@@ -36,9 +36,22 @@ The gateway reads roles from the token. Public registration can only create `ROL
 
 Shipment requests derive `customerId` from the verified JWT subject, so clients should omit it from `POST /api/v1/shipments/request`. `GET /api/v1/shipments/all` likewise uses the signed-in customer's profile ID.
 
+## Basic driver shipment lifecycle
+
+An administrator provisions drivers through `POST /api/v1/drivers`, including a password in the request. The password is stored as a BCrypt hash and is write-only in the driver DTO. The driver can then use `POST /api/v1/auth/login` to receive a `ROLE_DRIVER` JWT. Make sure the driver is available and has coordinates before requesting a shipment.
+
+After a customer requests a quote, completes payment, and confirms the shipment, log in as the assigned driver and call these actions in order:
+
+1. `POST /api/v1/shipments/{id}/accept`
+2. `POST /api/v1/shipments/{id}/pickup`
+3. `POST /api/v1/shipments/{id}/in-transit`
+4. `POST /api/v1/shipments/{id}/deliver`
+
+Each action requires the assigned driver's JWT. The shipment moves through `CONFIRMED`, `DRIVER_ACCEPTED`, `PICKED_UP`, `IN_TRANSIT`, and `DELIVERED`. Delivery records the actual delivery time and makes the driver available again. Invalid state transitions and actions by another driver return HTTP 409. The Postman collection includes **Create Driver**, **Login as Driver**, and each lifecycle action; switch back to a customer login before making customer requests.
+
 ## Postman
 
-Import [Fastlivery-Express-JWT.postman_collection.json](Fastlivery-Express-JWT.postman_collection.json). Run **Authentication → Register Customer** once, or **Authentication → Login** for an existing account. The collection scripts save the returned token and customer profile ID; subsequent requests use the token automatically. Use unique email and mobile values when registering again.
+Import [Fastlivery-Express-JWT.postman_collection.json](Fastlivery-Express-JWT.postman_collection.json). Run **Authentication → Register Customer** once, or **Authentication → Login** for an existing account. The collection scripts save the returned token and customer profile ID; subsequent requests use the token automatically. Use unique email and mobile values when registering again. To exercise driver actions, first log in as admin, run **Create Driver**, and then run **Login as Driver**. That replaces the collection token with the driver token.
 
 Start with **Gateway → Health (public)**, then try **Gateway → Observability Ping** and **Shipment → Request Shipment Quote and Assign Driver**. The shipment flow also needs an available driver with a location, PostgreSQL, Redis, and a valid OpenRouteService key. Stripe checkout requires Stripe configuration.
 

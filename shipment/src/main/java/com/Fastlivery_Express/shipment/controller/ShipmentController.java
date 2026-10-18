@@ -63,6 +63,30 @@ public class ShipmentController {
         return ResponseEntity.ok(ApiResponse.success("Shipment confirmed successfully", iShipmentService.confirmShipment(id)));
     }
 
+    @PostMapping("/{id}/accept")
+    public ResponseEntity<ApiResponse<ShipmentDto>> acceptShipment(@PathVariable Long id,
+            @RequestHeader("X-Authenticated-User-Id") String driverId) {
+        return ResponseEntity.ok(ApiResponse.success("Shipment accepted successfully", iShipmentService.acceptShipment(id, driverId)));
+    }
+
+    @PostMapping("/{id}/pickup")
+    public ResponseEntity<ApiResponse<ShipmentDto>> pickupShipment(@PathVariable Long id,
+            @RequestHeader("X-Authenticated-User-Id") String driverId) {
+        return ResponseEntity.ok(ApiResponse.success("Shipment pickup recorded successfully", iShipmentService.pickupShipment(id, driverId)));
+    }
+
+    @PostMapping("/{id}/in-transit")
+    public ResponseEntity<ApiResponse<ShipmentDto>> markShipmentInTransit(@PathVariable Long id,
+            @RequestHeader("X-Authenticated-User-Id") String driverId) {
+        return ResponseEntity.ok(ApiResponse.success("Shipment marked in transit", iShipmentService.markShipmentInTransit(id, driverId)));
+    }
+
+    @PostMapping("/{id}/deliver")
+    public ResponseEntity<ApiResponse<ShipmentDto>> deliverShipment(@PathVariable Long id,
+            @RequestHeader("X-Authenticated-User-Id") String driverId) {
+        return ResponseEntity.ok(ApiResponse.success("Shipment delivered successfully", iShipmentService.deliverShipment(id, driverId)));
+    }
+
     @PostMapping("/{id}/payment/checkout")
     public ResponseEntity<ApiResponse<StripeCheckoutSessionDto>> createStripeCheckoutSession(@Valid @PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Stripe checkout session created successfully",

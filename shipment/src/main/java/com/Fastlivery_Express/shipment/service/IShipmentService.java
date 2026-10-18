@@ -20,5 +20,9 @@ public interface IShipmentService {
                                       String paymentStatus, String trackingNumber, Pageable pageable);
     ShipmentQuoteResponseDto requestShipment(ShipmentRequestDto shipmentRequestDto, String customerId);
     ShipmentDto confirmShipment(Long id);
+    ShipmentDto acceptShipment(Long id, String driverId);
+    ShipmentDto pickupShipment(Long id, String driverId);
+    ShipmentDto markShipmentInTransit(Long id, String driverId);
+    ShipmentDto deliverShipment(Long id, String driverId);
     ShipmentTrackingDto trackShipment(String trackingNumber);
 }

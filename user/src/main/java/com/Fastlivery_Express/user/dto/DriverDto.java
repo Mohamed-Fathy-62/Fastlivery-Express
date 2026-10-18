@@ -11,6 +11,10 @@ import lombok.EqualsAndHashCode;
         description = "Schema to hold Driver information")
 public class DriverDto extends UserDto{
 
+    // Used only when an administrator provisions a driver account; never mapped back from the entity.
+    @com.fasterxml.jackson.annotation.JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY)
+    private String password;
+
     private String licenseNumber;
     private String vehicleType;
     private String vehicleNumber;
