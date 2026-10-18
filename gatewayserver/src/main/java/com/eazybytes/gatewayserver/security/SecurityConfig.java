@@ -8,6 +8,14 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtValidators;
+import org.springframework.security.oauth2.jwt.NimbusReactiveJwtDecoder;
+import org.springframework.security.oauth2.jwt.ReactiveJwtDecoder;
+import org.springframework.security.oauth2.core.OAuth2Error;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.oauth2.server.resource.authentication.ReactiveJwtAuthenticationConverterAdapter;
@@ -20,10 +28,29 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
 import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import javax.crypto.spec.SecretKeySpec;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig {
+
+    @Bean
+    ReactiveJwtDecoder jwtDecoder(@Value("${app.jwt.secret}") String secret,
+                                  @Value("${app.jwt.issuer}") String issuer,
+                                  @Value("${app.jwt.audience}") String audience) {
+        var signingKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        NimbusReactiveJwtDecoder decoder = NimbusReactiveJwtDecoder.withSecretKey(signingKey)
+                .macAlgorithm(MacAlgorithm.HS256)
+                .build();
+        OAuth2TokenValidator<Jwt> audienceValidator = jwt -> jwt.getAudience().contains(audience)
+                ? OAuth2TokenValidatorResult.success()
+                : OAuth2TokenValidatorResult.failure(new OAuth2Error("invalid_token", "Required audience is missing", null));
+        decoder.setJwtValidator(new DelegatingOAuth2TokenValidator<>(
+                JwtValidators.createDefaultWithIssuer(issuer), audienceValidator));
+        return decoder;
+    }
 
     @Bean
     SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
@@ -32,6 +59,17 @@ public class SecurityConfig {
                 .authorizeExchange(authorize -> authorize
                         .pathMatchers("/actuator/health", "/actuator/health/**").permitAll()
                         .pathMatchers("/actuator/prometheus").permitAll()
+                        .pathMatchers(HttpMethod.POST, "/api/v1/auth/register", "/api/v1/auth/login").permitAll()
+                        .pathMatchers(HttpMethod.POST, "/api/v1/shipments/payment/webhook").permitAll()
+                        .pathMatchers(HttpMethod.POST, "/api/v1/customers", "/api/v1/drivers").hasRole("ADMIN")
+                        .pathMatchers(HttpMethod.PUT, "/api/v1/users/**", "/api/v1/customers/**", "/api/v1/drivers/**").hasRole("ADMIN")
+                        .pathMatchers(HttpMethod.DELETE, "/api/v1/users/**", "/api/v1/customers/**", "/api/v1/drivers/**").hasRole("ADMIN")
+                        .pathMatchers(HttpMethod.POST, "/api/v1/shipments/request").hasRole("CUSTOMER")
+                        .pathMatchers(HttpMethod.GET, "/api/v1/shipments/all").hasRole("CUSTOMER")
+                        .pathMatchers(HttpMethod.GET, "/api/v1/shipments").hasRole("ADMIN")
+                        .pathMatchers(HttpMethod.POST, "/api/v1/shipments").hasRole("ADMIN")
+                        .pathMatchers(HttpMethod.PUT, "/api/v1/shipments/**").hasRole("ADMIN")
+                        .pathMatchers(HttpMethod.DELETE, "/api/v1/shipments/**").hasRole("ADMIN")
                         .pathMatchers(HttpMethod.POST, "/api/v1/pricing/calculate", "/api/v1/pricing/quote").authenticated()
                         .pathMatchers("/api/v1/pricing/configs", "/api/v1/pricing/configs/**").hasRole("ADMIN")
                         .anyExchange().authenticated())

@@ -1,21 +1,4 @@
 services:
-  keycloak:
-    image: quay.io/keycloak/keycloak:26.5.5
-    container_name: fastlivery-keycloak
-    command: start-dev --import-realm
-    ports:
-      - "9095:8080"
-    environment:
-      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME:-admin}
-      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:?Set KEYCLOAK_ADMIN_PASSWORD in your environment}
-      KC_HOSTNAME: http://localhost:9095
-      KC_HTTP_ENABLED: "true"
-    volumes:
-      - ./keycloak:/opt/keycloak/data/import:ro
-    extends:
-      file: common-config.yml
-      service: network-deploy-service
-
   configserver:
     build:
       context: ../../configserver
@@ -68,16 +51,15 @@ services:
     ports:
       - "8088:8088"
     depends_on:
-      keycloak:
-        condition: service_started
       configserver:
         condition: service_healthy
       eurekaserver:
         condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "gatewayserver"
-      JWT_ISSUER_URI: http://localhost:9095/realms/fastlivery
-      JWT_JWK_SET_URI: http://keycloak:8080/realms/fastlivery/protocol/openid-connect/certs
+      JWT_SECRET: FastliveryLocalJwtSecretKey-ChangeBeforeDeploy
+      JWT_ISSUER: fastlivery-local
+      JWT_AUDIENCE: fastlivery-api
     extends:
       file: common-config.yml
       service: microservice-eureka-config
@@ -87,7 +69,7 @@ services:
     container_name: rabbitmq
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-fastlivery_app}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:?Set RABBITMQ_PASSWORD for RabbitMQ}
+      RABBITMQ_DEFAULT_PASS: local-dev-rabbitmq-password
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -113,7 +95,11 @@ services:
         condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "users"
-      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD for the PostgreSQL database}
+      DB_HOST: host.docker.internal
+      DB_PASSWORD: postgres
+      JWT_SECRET: FastliveryLocalJwtSecretKey-ChangeBeforeDeploy
+      JWT_ISSUER: fastlivery-local
+      JWT_AUDIENCE: fastlivery-api
     extends:
       file: common-config.yml
       service: microservice-eureka-config
@@ -132,11 +118,12 @@ services:
         condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "shipments"
-      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD for the PostgreSQL database}
+      DB_HOST: host.docker.internal
+      DB_PASSWORD: postgres
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: ${RABBITMQ_USER:-fastlivery_app}
-      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:?Set RABBITMQ_PASSWORD for RabbitMQ}
+      RABBITMQ_PASSWORD: local-dev-rabbitmq-password
       SPRING_RABBITMQ_HOST: rabbitmq
       CLIENTS_USERS_URL: http://users:8085
       CLIENTS_PRICING_URL: http://pricing:8087
@@ -158,8 +145,9 @@ services:
         condition: service_healthy
     environment:
       SPRING_APPLICATION_NAME: "pricing"
-      DB_PASSWORD: ${DB_PASSWORD:?Set DB_PASSWORD for the PostgreSQL database}
-      ORS_API_KEY: ${ORS_API_KEY:?Set ORS_API_KEY for OpenRouteService}
+      DB_HOST: host.docker.internal
+      DB_PASSWORD: postgres
+      ORS_API_KEY: REPLACE_WITH_YOUR_OPENROUTESERVICE_API_KEY
       REDIS_HOST: host.docker.internal
       REDIS_PORT: 6379
       SPRING_DATA_REDIS_HOST: host.docker.internal
@@ -185,7 +173,7 @@ services:
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: ${RABBITMQ_USER:-fastlivery_app}
-      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD:?Set RABBITMQ_PASSWORD for RabbitMQ}
+      RABBITMQ_PASSWORD: local-dev-rabbitmq-password
       SPRING_RABBITMQ_HOST: rabbitmq
     extends:
       file: common-config.yml

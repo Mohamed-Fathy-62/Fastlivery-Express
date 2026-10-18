@@ -27,13 +27,6 @@ public class UserController {
 
     private IUserService userService;
 
-    // Creates the application profile; Keycloak owns credentials and token issuance.
-    @PostMapping("/signup")
-    public ResponseEntity<ApiResponse<UserDto>> createUser(@Valid @RequestBody UserDto userDto) {
-        UserDto created = userService.createUser(userDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("User created successfully", created));
-    }
-
     @GetMapping
     public ResponseEntity<ApiResponse<Page<UserDto>>> searchUsers(@RequestParam(required = false) String status,
                                                                   @RequestParam(required = false) String role,

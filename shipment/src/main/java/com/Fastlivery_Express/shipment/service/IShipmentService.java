@@ -18,7 +18,7 @@ public interface IShipmentService {
     List<ShipmentDto> getAllShipmentsByUserId(String userId);
     Page<ShipmentDto> searchShipments(String customerId, String driverId, String status,
                                       String paymentStatus, String trackingNumber, Pageable pageable);
-    ShipmentQuoteResponseDto requestShipment(ShipmentRequestDto shipmentRequestDto);
+    ShipmentQuoteResponseDto requestShipment(ShipmentRequestDto shipmentRequestDto, String customerId);
     ShipmentDto confirmShipment(Long id);
     ShipmentTrackingDto trackShipment(String trackingNumber);
 }

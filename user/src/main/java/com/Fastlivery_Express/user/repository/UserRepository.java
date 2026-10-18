@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificationExecutor<User> {
+public interface UserRepository extends JpaRepository<User, String>, JpaSpecificationExecutor<User> {
 
     Optional<User> findByEmail(String email);
     Optional<User> findByMobileNumber(String mobileNumber);
-    Optional<User> findByUserId(String keycloakId);
+    Optional<User> findByUserId(String userId);
 
     @Query("select d from Driver d where d.isAvailable = true and d.currentLatitude is not null and d.currentLongitude is not null")
     List<Driver> findAvailableDriversWithLocation();

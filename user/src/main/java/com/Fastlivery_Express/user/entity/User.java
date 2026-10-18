@@ -20,6 +20,10 @@ public class User extends BaseEntity {
     @Column(name = "email", unique = true)
     private String email;
 
+    @Column(name = "password_hash")
+    @ToString.Exclude
+    private String passwordHash;
+
     @Column(name = "mobile_number", unique = true)
     private String mobileNumber;
 

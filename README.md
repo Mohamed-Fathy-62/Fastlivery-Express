@@ -1,34 +1,49 @@
-Fastlivery is a scalable, cloud‑ready logistics 
-and package delivery platform built using a modern microservices architecture. 
-It provides end‑to‑end support for user management, shipment creation, 
-driver assignment, real‑time tracking, pricing, notifications, and more.
+# Fastlivery Express
 
-## JWT authentication (local development)
+Fastlivery is a microservices demo for customer profiles, driver assignment, shipment pricing, payments, and tracking.
 
-The gateway validates OAuth 2.0 Bearer access tokens issued by the `fastlivery` Keycloak realm. It does not create an HTTP session or store authentication state in Redis. The default Docker Compose stack keeps the user, shipment, pricing, and notification service ports inside the Compose network; call those APIs through `http://localhost:8088`.
+## Local run
 
-The default stack expects PostgreSQL (`fedb`) and Redis on the host at their default ports. Set your PostgreSQL password, a valid OpenRouteService key, and a local Keycloak administrator password before starting:
+The default Compose stack runs the application services and connects them to PostgreSQL and Redis running on the host. Create a PostgreSQL database named `fedb`; the local defaults are username `postgres` and password `postgres`. Replace the OpenRouteService API-key placeholder in `docker-compose/default/docker-compose.yml` if you want route-based quotes to work. Config Server also needs access to its configured Git repository.
+
+Start the stack from the repository root:
 
 ```powershell
-$env:KEYCLOAK_ADMIN_PASSWORD = "choose-a-local-development-password"
-$env:DB_PASSWORD = "your-local-postgres-password"
-$env:ORS_API_KEY = "your-openrouteservice-api-key"
-$env:RABBITMQ_PASSWORD = "choose-a-local-rabbitmq-password"
 docker compose -f docker-compose/default/docker-compose.yml up -d --build
 ```
 
-Keycloak is available at `http://localhost:9095`. Sign in to the admin console, create a test user in the imported `fastlivery` realm, and assign a realm role (`CUSTOMER`, `DRIVER`, or `ADMIN`). Configure a client to use Authorization Code with PKCE to obtain an access token. Send it to the gateway as `Authorization: Bearer <access-token>`. Pricing configuration endpoints require the `ADMIN` realm role; other API routes require a valid token.
+The API gateway is at `http://localhost:8088`. JWT authentication is handled by the user service; there is no Keycloak service. The local HS256 signing secret is configured in the user service, gateway settings, and default Compose file. It is a development value; change it before deploying anywhere shared.
 
-For another identity provider, set `JWT_ISSUER_URI` to the exact issuer in the token's `iss` claim, `JWT_JWK_SET_URI` to that provider's JWK Set endpoint, and `JWT_AUDIENCE` to the API audience included in access tokens. Tokens must pass issuer, signature, expiry, and audience validation.
+## Register and use a JWT
 
-The local Keycloak administrator password is supplied through the environment and must be unique to local development. Do not reuse it outside this stack.
+Register a customer with `POST http://localhost:8088/api/v1/auth/register`:
 
-## Verify with Postman
+```json
+{
+  "firstname": "Demo",
+  "lastname": "Customer",
+  "email": "demo.customer@example.com",
+  "mobileNumber": "01012345678",
+  "password": "DemoPassword123!",
+  "preferredLanguage": "en",
+  "deliveryAddress": "Nasr City, Cairo"
+}
+```
 
-1. Confirm PostgreSQL (`fedb`) and Redis are running on the host, then start the Compose stack with the environment variables above. The config server also needs access to its configured Git repository.
-2. In Keycloak, select the `fastlivery` realm, create a test user, set a non-temporary password, and assign `CUSTOMER` or `ADMIN`.
-3. Import [Fastlivery-Express-JWT.postman_collection.json](Fastlivery-Express-JWT.postman_collection.json) into Postman. Open the collection's **Authorization** tab, choose **Get New Access Token**, sign in with that user, and select **Use Token**.
-4. Run **Gateway → Health (public)** first. Then run **Gateway → Observability Ping** and an authenticated request such as **Pricing → Calculate Detailed Quote**. The quote request also needs a valid `ORS_API_KEY` and reachable Redis/PostgreSQL.
-5. To try the shipment request flow, create a driver with a unique email/mobile number, confirm the driver's location and availability, then run **Shipment → Request Shipment Quote and Assign Driver**. Payment and confirmation requests need valid Stripe configuration and a paid checkout session.
+Registration creates a `Customer` profile and returns an access token. The profile ID is the JWT subject. Passwords are stored as BCrypt hashes. Tokens expire after 60 minutes by default. To get another token, call `POST /api/v1/auth/login` with the same email and password. Send the token on protected requests as `Authorization: Bearer <access-token>`.
 
-The QA and production Compose files are legacy stacks and do not include this Keycloak/JWT gateway setup. Use the default Compose file for this collection.
+The gateway reads roles from the token. Public registration can only create `ROLE_CUSTOMER`; it cannot assign admin or driver roles. For local admin testing, register a customer, promote that profile in PostgreSQL with `UPDATE users SET role = 'ROLE_ADMIN' WHERE email = 'demo.customer@example.com';`, then log in again to get a token with the updated role. Pricing configuration endpoints require `ROLE_ADMIN`; other protected routes require a valid token.
+
+Shipment requests derive `customerId` from the verified JWT subject, so clients should omit it from `POST /api/v1/shipments/request`. `GET /api/v1/shipments/all` likewise uses the signed-in customer's profile ID.
+
+## Postman
+
+Import [Fastlivery-Express-JWT.postman_collection.json](Fastlivery-Express-JWT.postman_collection.json). Run **Authentication → Register Customer** once, or **Authentication → Login** for an existing account. The collection scripts save the returned token and customer profile ID; subsequent requests use the token automatically. Use unique email and mobile values when registering again.
+
+Start with **Gateway → Health (public)**, then try **Gateway → Observability Ping** and **Shipment → Request Shipment Quote and Assign Driver**. The shipment flow also needs an available driver with a location, PostgreSQL, Redis, and a valid OpenRouteService key. Stripe checkout requires Stripe configuration.
+
+To stop the stack:
+
+```powershell
+docker compose -f docker-compose/default/docker-compose.yml down
+```

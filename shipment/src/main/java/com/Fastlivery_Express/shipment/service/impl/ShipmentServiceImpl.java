@@ -128,7 +128,7 @@ public class ShipmentServiceImpl implements IShipmentService {
     }
 
     @Override
-    public ShipmentQuoteResponseDto requestShipment(ShipmentRequestDto shipmentRequestDto) {
+    public ShipmentQuoteResponseDto requestShipment(ShipmentRequestDto shipmentRequestDto, String customerId) {
         Double price = pricingFeignClient.calculatePrice(buildCoordinates(shipmentRequestDto), shipmentRequestDto.getTotalWeight()).getData();
         DriverDto assignedDriver = usersFeignClient.findNearestAvailableDriver(
                 shipmentRequestDto.getOriginLatitude(),
@@ -138,7 +138,7 @@ public class ShipmentServiceImpl implements IShipmentService {
 
         Shipment shipment = new Shipment();
         shipment.setTrackingNumber(generateTrackingNumber());
-        shipment.setCustomerId(shipmentRequestDto.getCustomerId());
+        shipment.setCustomerId(customerId);
         shipment.setDriverId(assignedDriver.getUserId());
         shipment.setOriginAddress(shipmentRequestDto.getOriginAddress());
         shipment.setDestinationAddress(shipmentRequestDto.getDestinationAddress());

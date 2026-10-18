@@ -69,7 +69,7 @@ Check containers:
 docker compose -f docker-compose/default/docker-compose.yml ps
 ```
 
-Generate one gateway request and one clear log line (replace the placeholder with a Keycloak access token):
+Generate one gateway request and one clear log line (replace the placeholder with a JWT from the user service):
 
 ```powershell
 curl -H "Authorization: Bearer <access-token>" "http://localhost:8088/api/v1/observability/ping?message=hello-grafana"

@@ -19,7 +19,7 @@ spring:
         - id: USERS
           uri: lb://users
           predicates:
-            - Path=/api/v1/users/**,/api/v1/customers/**,/api/v1/drivers/**
+            - Path=/api/v1/auth/**,/api/v1/users/**,/api/v1/customers/**,/api/v1/drivers/**
         - id: SHIPMENTS
           uri: lb://shipments
           predicates:
@@ -30,13 +30,11 @@ spring:
             - Path=/api/v1/pricing/**
 
 
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: ${JWT_ISSUER_URI:http://localhost:9095/realms/fastlivery}
-          jwk-set-uri: ${JWT_JWK_SET_URI:http://localhost:9095/realms/fastlivery/protocol/openid-connect/certs}
-          audiences: ${JWT_AUDIENCE:fastlivery-api}
+app:
+  jwt:
+    secret: ${JWT_SECRET:FastliveryLocalJwtSecretKey-ChangeBeforeDeploy}
+    issuer: ${JWT_ISSUER:fastlivery-local}
+    audience: ${JWT_AUDIENCE:fastlivery-api}
 
 eureka:
   instance:

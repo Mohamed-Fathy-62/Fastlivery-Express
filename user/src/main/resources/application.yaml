@@ -5,9 +5,9 @@ spring:
   application:
     name: users
   datasource:
-    url: jdbc:postgresql://${DB_HOST:host.docker.internal}:${DB_PORT:5432}/${DB_NAME:fedb}
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:fedb}
     username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:}
+    password: ${DB_PASSWORD:postgres}
     driver-class-name: org.postgresql.Driver
   jackson:
     deserialization:
@@ -21,6 +21,12 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
   config:
     import: "configserver:http://${CONFIG_SERVER_HOST:localhost}:8071/"
+app:
+  jwt:
+    secret: ${JWT_SECRET:FastliveryLocalJwtSecretKey-ChangeBeforeDeploy}
+    issuer: ${JWT_ISSUER:fastlivery-local}
+    audience: ${JWT_AUDIENCE:fastlivery-api}
+    ttl-minutes: ${JWT_TTL_MINUTES:60}
 
 management:
   metrics:

@@ -71,6 +71,12 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
         return buildErrorResponseEntity(HttpStatus.NOT_FOUND, "USER_NOT_FOUND", exception, webRequest);
     }
 
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidCredentials(InvalidCredentialsException exception,
+                                                                       WebRequest webRequest) {
+        return buildErrorResponseEntity(HttpStatus.UNAUTHORIZED, "INVALID_CREDENTIALS", exception, webRequest);
+    }
+
     private ResponseEntity<ErrorResponseDto> buildErrorResponseEntity(HttpStatus status, String error,
                                                                       Exception exception, WebRequest webRequest) {
         return new ResponseEntity<>(buildErrorResponse(status, error, exception.getMessage(), webRequest, null), status);

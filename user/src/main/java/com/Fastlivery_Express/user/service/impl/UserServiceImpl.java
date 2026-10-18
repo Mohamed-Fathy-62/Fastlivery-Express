@@ -28,6 +28,11 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public UserDto createUser(UserDto userDto) {
+        // Public signup creates customer profiles only. Roles and verification are controlled by trusted flows.
+        userDto.setUserId(null);
+        userDto.setRole("ROLE_CUSTOMER");
+        userDto.setStatus("ACTIVE");
+        userDto.setIsVerified(Boolean.FALSE);
         if(userRepository.findByEmail(userDto.getEmail()).isPresent()){
             throw new UserAlreadyExistsException("User with email " + userDto.getEmail() + " already exists.");
         }

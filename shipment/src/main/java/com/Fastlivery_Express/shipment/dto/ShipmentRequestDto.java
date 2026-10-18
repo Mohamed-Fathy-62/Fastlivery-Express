@@ -6,8 +6,6 @@ import lombok.Data;
 
 @Data
 public class ShipmentRequestDto {
-    @NotBlank(message = "customerId can not be null or empty")
-    private String customerId;
     @NotBlank(message = "originAddress can not be null or empty")
     private String originAddress;
     @NotBlank(message = "destinationAddress can not be null or empty")

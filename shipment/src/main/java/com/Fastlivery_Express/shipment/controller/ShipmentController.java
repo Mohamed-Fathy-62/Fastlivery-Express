@@ -51,8 +51,10 @@ public class ShipmentController {
     }
 
     @PostMapping("/request")
-    public ResponseEntity<ApiResponse<ShipmentQuoteResponseDto>> requestShipment(@Valid @RequestBody ShipmentRequestDto shipmentRequestDto) {
-        ShipmentQuoteResponseDto quote = iShipmentService.requestShipment(shipmentRequestDto);
+    public ResponseEntity<ApiResponse<ShipmentQuoteResponseDto>> requestShipment(
+            @RequestHeader("X-Authenticated-User-Id") String customerId,
+            @Valid @RequestBody ShipmentRequestDto shipmentRequestDto) {
+        ShipmentQuoteResponseDto quote = iShipmentService.requestShipment(shipmentRequestDto, customerId);
         return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success("Shipment quote created successfully", quote));
     }
 
@@ -87,7 +89,8 @@ public class ShipmentController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<ApiResponse<List<ShipmentDto>>> getAllShipments(@RequestParam("customer_id") String customerId) {
+    public ResponseEntity<ApiResponse<List<ShipmentDto>>> getAllShipments(
+            @RequestHeader("X-Authenticated-User-Id") String customerId) {
         List<ShipmentDto> shipments = iShipmentService.getAllShipmentsByUserId(customerId);
         return ResponseEntity.ok(ApiResponse.success("Shipments fetched successfully", shipments));
     }
